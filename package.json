@@ -1,0 +1,19 @@
+{
+  "name": "zeromark",
+  "version": "1.0.0",
+  "description": "",
+  "main": "options.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gamerslouis/ZeroMarks.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gamerslouis/ZeroMarks/issues"
+  },
+  "homepage": "https://github.com/gamerslouis/ZeroMarks#readme"
+}

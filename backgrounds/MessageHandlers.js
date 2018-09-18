@@ -19,7 +19,7 @@ function messageHandler(msg, sender, response) {
                 break;
             }
 
-            case "ChangeCurentTabbyId":
+            case 'ChangeCurentTabbyId':
             {
                 chrome.tabs.update(Number(msg.tabId), {highlighted: true});　//切換分頁
                 //chrome.tabs.highlight({'tabs':Number(request.tabId)});
