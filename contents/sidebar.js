@@ -16,7 +16,7 @@ var sidebar = new (class {
         div.classList.add(this.SIDEBAR_CLASS_NAME); //設定class屬性
         div.style.background = '#cccccc';
         div.style.height = '100%';
-        div.style.width = '20rem';
+        div.style.width = '300px';
         div.style.position = 'fixed';
         div.style.top = '0px';
         div.style.right = '0px';
