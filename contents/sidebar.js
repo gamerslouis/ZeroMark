@@ -4,10 +4,7 @@ console.log('X');
 
 var sidebar = new (class {
     constructor() {
-<<<<<<< HEAD
         this.slideSpeed = 250; //設定開關時滑動時間
-=======
->>>>>>> origin/SDSA
         this.onDisplayChange = new Listener(); //DisplayChangeEventHandler
         this.SIDEBAR_CLASS_NAME = 'zeromark_sidebar';
 

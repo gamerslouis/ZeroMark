@@ -36,7 +36,7 @@ class TabContainer {
     }
 
     add(tab) {
-        if (this.container[!tab.windowId]) {
+        if (!this.container[tab.windowId]) {
             this.container[tab.windowId] = {};
             this.container[tab.windowId][tab.id] = tab;
         }
