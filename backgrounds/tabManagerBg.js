@@ -89,14 +89,14 @@ function onRemove(tabId, removeInfo) {
 }
 
 function onActivated(activeInfo) {
-    chrome.tabs.sendMessage(activeInfo.tabId, { command: 'updateManager' });
+    chrome.tabs.sendMessage(activeInfo.tabId, { command: 'refreshManager' });
 }
 
 function onAttached(tabId, attachInfo) {
     chrome.tabs.get(tabId, apiTab => {
         tabContainer.add(makeTabFromApiTab(apiTab, searchStrs[apiTab.windowId]));
         //sendMessageToWindowActive(attachInfo.newWindowId,"onTabAdd",{'tab':apiTtab});
-        sendMessageToWindowActive(attachInfo.newWindowId, 'updateManager');
+        sendMessageToWindowActive(attachInfo.newWindowId, 'refreshManager');
     });
 }
 
@@ -107,7 +107,7 @@ function onDetached(tabId, detachInfo) {
 
 function onMoved(tabId, moveInfo) {
     tabContainer.move(moveInfo.windowId, tabId, moveInfo.fromIndex, moveInfo.toIndex);
-    sendMessageToWindowActive(moveInfo.windowId, 'updateManager');
+    sendMessageToWindowActive(moveInfo.windowId, 'refreshManager');
 }
 
 //監聽內容腳本操作任務要求
@@ -118,7 +118,7 @@ chrome.runtime.onMessage.addListener(
                 case 'RefreshManager':
                     {
                         tabManagerBgInit();
-                        sendMessageToActive('updateManager');
+                        sendMessageToActive('refreshManager');
                         break;
                     }
 

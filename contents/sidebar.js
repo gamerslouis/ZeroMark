@@ -7,10 +7,9 @@ var sidebar = new (class {
         this.slideSpeed = 250; //設定開關時滑動時間
         this.onDisplayChange = new Listener(); //DisplayChangeEventHandler
         this.SIDEBAR_CLASS_NAME = 'zeromark_sidebar';
-
     }
 
-    DOMInit() {
+    Init() {
         //插入管理器根元素
         let div = document.createElement('div');
         div.classList.add(this.SIDEBAR_CLASS_NAME); //設定class屬性
@@ -27,33 +26,37 @@ var sidebar = new (class {
         div.target = '_parent';
         document.body.appendChild(div);
 
-        this.jq = $('div.' + this.SIDEBAR_CLASS_NAME);
+        this._dom = div;
     }
 
+    /**檢測Sidebar是否處於顯示狀態*/
     isOpened() {
-        return this.jq.css('display') != 'none';
+        return this._dom.style.display != 'none';
     }
 
+    /**添加元素至Sidebar
+     * @param {HTMLElement}content 元素的HTMLElement
+     * @return 元素的HTMLElement
+     */
     append(content) {
-        let jqcontent = $(content);
-        this.jq.append(jqcontent);
-        return jqcontent;
+        this._dom.appendChild(content);
+        return content;
     }
 
-    //顯示管理器視窗
+    /**顯示Sidebar視窗*/
     show() {
-        this.jq.show('slide', {
+        $(this._dom).show('slide', {
             direction: 'right'
         }, this.slideSpeed);
-        this.jq.focus();
+        this._dom.focus();
         this.onDisplayChange.fire(this, {
             'type': 'show'
         });
     }
 
-    //關閉管理器視窗
+    /**關閉Sidebar視窗*/
     hide() {
-        this.jq.hide('slide', {
+        $(this._dom).hide('slide', {
             direction: 'right'
         }, this.slideSpeed);
         this.onDisplayChange.fire(this, {
@@ -61,32 +64,37 @@ var sidebar = new (class {
         });
     }
 
-    //開關管理器視窗
+    
+    /**開關Sidebar視窗
+     * @param  {bool} open true:開啟視窗 false:關閉視窗 null:反轉當前顯示狀態
+     */
     changeDisplay(open) {
-        if (open == null) (this.jq.css('display') == 'none') ? this.show() : this.hide();
+        if (open == null) this.isOpened() ? this.hide(): this.show();
         else if (open) this.show();
         else this.hide();
     }
 })();
 
-chrome.runtime.onMessage.addListener(
-    function (request/*, sender, sendResponse*/) {
-        switch (request.command) {
-            case 'key_openSidebar': //監聽開關管理器熱鍵按下事件
-                {
-                    sidebar.changeDisplay(null);
-                    break;
-                }
 
-            default:
-                break;
-        }
-    }
-);
 
 window.onload = () => {
-    sidebar.DOMInit();
-    tabManager.DOMInit();
+    sidebar.Init();
+    tabManager.Init();
+
+    chrome.runtime.onMessage.addListener(
+        function (request/*, sender, sendResponse*/) {
+            switch (request.command) {
+                case 'key_openSidebar': //熱鍵觸發
+                    {
+                        sidebar.changeDisplay(null);
+                        break;
+                    }
+
+                default:
+                    break;
+            }
+        }
+    );
 };
 /*
 sidebar.initAfterList = [];

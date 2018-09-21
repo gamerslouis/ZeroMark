@@ -1,88 +1,82 @@
-<div style='height: 95%;width: 300px;'>
-    <style type="text/css">
-        /* basic style */
-		
-        .tabSearchBar {
-            position: relative;
-            height: 30px;
-            width: 270px;
-            margin: 5px;
-            resize: none;
-            background: white;
-        }
+<style type="text/css">
+    /* basic style */
 
-        .list {
-            position: relative;
-            overflow-y: scroll;
-            overflow-x: hidden;
-            height: 100%;
-			color: black;
-        }
+    .zeromark_tabManager_tabSearchBar {
+        position: relative;
+        height: 30px;
+        width: 270px;
+        margin: 5px;
+        resize: none;
+        background: white;
+    }
+
+    .zeromark_tabManager_tabList {
+        position: relative;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: 100%;
+        color: black;
+    }
 
 
-        .listItem {
-            background: #f0f0f7;
-            height: 30px;
-            position: relative;
-            margin: 5px;
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            padding: 2px 12px;
-        }
+    .zeromark_tabManager_listItem {
+        background: #f0f0f7;
+        height: 30px;
+        position: relative;
+        margin: 5px;
+        border-radius: 2px;
+        display: flex;
+        align-items: center;
+        padding: 2px 12px;
+    }
 
-        .listItem_selected {
-            border-style: solid;
-            border-width: 2px;
-            border-color: skyblue;
-            margin: 3px 5px;
-            padding: 0px 12px;
-        }
+    .zeromark_tabManager_listItem_selected {
+        border-style: solid;
+        border-width: 2px;
+        border-color: skyblue;
+        margin: 3px 5px;
+        padding: 0px 12px;
+    }
 
-        .invisible {
-            display: none;
-        }
+    .zeromark_tabManager_invisible {
+        display: none;
+    }
 
-        .tabobj {
-            display: flex;
-            align-items: center;
-        }
+    .zeromark_tabManager_favicon {
+        display: block;
+        background-color: transparent;
+        position: flex;
+        background-size: 1rem 1rem;
+        width: 25px;
+        height: 25px;
+        margin-right: 5px;
+        resize: none;
+    }
 
-        .tabid {
-            display: none;
-        }
+    .zeromark_tabManager_innerSpan{
+        display: flex;
+        align-self: auto;
+    }
 
-        .favicon {
-            display: block;
-			background-color:transparent;
-            position: flex;
-            background-size: 1rem 1rem;
-            width: 25px;
-            height: 25px;
-            margin-right: 5px;
-            resize: none;
-        }
+    .zeromark_tabManager_tabtitle {
+        text-overflow: ellipsis;
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        height: 100%;
+        width: 220px;
+        font-size: 12px;
+    }
 
-        .tabtitle {
-            text-overflow: ellipsis;
-            display: inline-block;
-            white-space: nowrap;
-            overflow: hidden;
-            height: 100%;
-            width: 220px;
-            font-size: 12px;
-        }
+    .zeromark_tabManager_closeButton {
+        position: absolute;
+        background-color: transparent;
+        width: 30px;
+        height: 30px;
+        right: 2px;
+    }
+</style>
 
-        .closeButton {
-            position: absolute;
-            background-color: transparent;
-			width: 30px;
-            height: 30px;
-            right: 2px;
-        }
-    </style>
-
-    <input class='tabSearchBar' type="text" />
-    <div class="list">
-    </div>
+<input class='zeromark_tabManager_tabSearchBar' type="text" />
+<div class="zeromark_tabManager_tabList">
 </div>
