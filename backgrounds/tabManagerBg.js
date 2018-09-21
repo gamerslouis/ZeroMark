@@ -34,7 +34,9 @@ function changeTabSelect(windowId, tabId, select) {
 
 function selectAllInWindow(windowId) {
     tabContainer.getWindow(windowId).forEach(tab => {
-        tab.managerSelect = true;
+        if (tab.matchSearch) {
+            tab.managerSelect = true;
+        }
     });
 }
 
@@ -180,7 +182,7 @@ chrome.runtime.onMessage.addListener(
 
                 case 'changeScrollPostion':
                     {
-                        scrollPosition[sender.tab.windowId] = request.scrollPosition
+                        scrollPosition[sender.tab.windowId] = request.scrollPosition;
                         break;
                     }
             }

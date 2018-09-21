@@ -117,9 +117,12 @@ var tabManager = new (class {
             command: 'selectAll'
         });
         for (let d of this.tabList.getElementsByClassName(this.classNames.listItem)) {
-            d.classList.add(this.classNames.listItem_selected);
+            if (!d.classList.contains(this.classNames.listItem_ivisible)) {
+                d.classList.add(this.classNames.listItem_selected);
+            }
         }
     }
+
 
     cancelSelct() {
         chrome.runtime.sendMessage({
@@ -191,10 +194,10 @@ var tabManager = new (class {
     closeTabSelect() {
         let tabIds = [];
         let listItems = this.tabList.getElementsByClassName(this.classNames.listItem_selected);
-        for (var item of listItems) {
-            tabIds.push(item.tab.id);
-            item.removeChild(item);
-            delete this.listItemIdMap[item.tab.id];
+        for (let i = listItems.length-1; i >0 ; i--) {
+            tabIds.push(listItems[i].tab.id);
+            delete this.listItemIdMap[listItems[i].tab.id];
+            this.tabList.removeChild(listItems[i]);
         }
         chrome.runtime.sendMessage({
             'command': 'closeTabs',
@@ -248,12 +251,12 @@ var tabManager = new (class {
                         };
 
                         let changeSelectRange = (listItemFrom, listItemTo, select) => {
-                            while (listItemFrom != listItemTo){
+                            while (listItemFrom != listItemTo) {
                                 if (select != listItemFrom.classList.contains(this.classNames.listItem_selected)) {
                                     changeSelect(listItemFrom);
                                 }
                                 listItemFrom = listItemFrom.nextSibling;
-                            } 
+                            }
                             if (select != listItemFrom.classList.contains(this.classNames.listItem_selected)) {
                                 changeSelect(listItemFrom);
                             }
