@@ -1,101 +1,46 @@
-function findFirstIndex(array,obj,geter = (x)=>{return x;})
-{
-    for(let i = 0;i<array.length;i++)
+import Configs from './Configs.js';
+
+const configs = new Configs(
     {
-        if(geter(array[i])==obj) return i;
-    }
-    return -1;
-}
+        //Sidebar
+        sidebarSlideTime: 250,
+        sidebarHideAfterFocusLeave: false,
 
-function sendMessageToAllTab(msg)
-{
-    chrome.tabs.query({},(tabs)=>{
-        tabs.forEach(tab => {
-            if(msg)
-            {
-                msg['command'] = command;
-                chrome.tabs.sendMessage(tab.id,msg);
-            }
-            else
-            {
-                chrome.tabs.sendMessage(tab.id,{'command':command});
-            }
-        });
-    })
-}
+        //TabManager
+        tabManagerCloseSidebarAfterSwitchTab: true,
+        tabManagerKeepSearchStrAfterSwitchTab: true,
+        tabManagerKeepSelectAfterSwitchTab: true,
+        tabManagerShowFavicon: true,
+        tabManagerShowCloseButton: true,
 
-function sendMessageToCurrent(msg)
-{
-    chrome.tab.query({currentWindow:true,active:true},(tabs)=>{
-        tabs.forEach(tab => {
-            if(msg)
-            {
-                msg['command'] = command;
-                chrome.tabs.sendMessage(tab.id,msg);
-            }
-            else
-            {
-                chrome.tabs.sendMessage(tab.id,{'command':command});
-            }
-        });
-    });
-}
+        //Browser
+        BrowserShowTabCounts: true,
+        BrowserTabCountsColor: '#0000FF',
+        BrowserTabCountsShowFullWithThousandTabs: false,
+        BrowserShowAllWindowsTabCounts: true,
 
-function sendMessageToActive(command,msg)
-{
-    chrome.tabs.query({active:true},(tabs)=>{
-        tabs.forEach(tab => {
-            if(msg)
-            {
-                msg['command'] = command;
-                chrome.tabs.sendMessage(tab.id,msg);
-            }
-            else
-            {
-                chrome.tabs.sendMessage(tab.id,{'command':command});
-            }
-        });
-    });
-}
+        //WebBackUp
+        //FocusBackUpImages: false,
 
-function sendMessageToTab(tabId,command,msg)
-{
-    if(msg)
-    {
-        msg['command'] = command;
-        chrome.tabs.sendMessage(tabId,msg);
-    }
-    else
-    {
-        chrome.tabs.sendMessage(tabId,{'command':command});
+        //Global
+        //font:14
+
+        //Log
+        useConsoleLog: true,
+        LogTime: true,
+        showModuleName: true
+
+    },
+    ((...args) => { log('common/Configs', ...args); })
+);
+configs.tryLoad();
+
+function log(module, ...args) {
+    if (configs) {
+        const logTitle = (configs.LogTime ? (`[${(new Date()).toString()}] `) : '')
+            + (configs.showModuleName ? `${module}:` : args.shift());
+        if (configs.useConsoleLog) console.log(logTitle, ...args);
     }
 }
 
-function sendMessageToWindowActive(windowId,command,msg)
-{
-    chrome.tabs.query({'windowId':windowId,'active':true},(tabs)=>{
-        tabs.forEach(tab => {
-            if(msg)
-            {
-                msg['command'] = command;
-                chrome.tabs.sendMessage(tab.id,msg);
-            }
-            else
-            {
-                chrome.tabs.sendMessage(tab.id,{command});
-            }
-        });
-        
-    });
-}
-
-function convertValueMapToArray(map)
-{
-    return Object.values(map);
-}
-
-Array.prototype.remove = function(from, to) {
-    let rest = this.slice((to || from) + 1 || this.length);
-    this.length = from < 0 ? this.length + from : from;
-    return this.push.apply(this, rest);
-  };
+export { configs, log };

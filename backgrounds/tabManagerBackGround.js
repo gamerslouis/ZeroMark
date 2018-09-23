@@ -1,47 +1,51 @@
-var tabContainer;
-var searchStrs = {};
-var scrollPosition = {};
+import TabContainer from '/common/TabContainer.js';
+import { log as _log, configs } from '/common/common.js';
+let logger = (args => _log('tabManagerBackground', args));
+import { makeTabFromApiTab } from '/common/ApiTab.js';
+import { sendToActive, sendToWindowActive } from '/common/ContentMessage.js';
 
-tabManagerBgInit();
-
-function tabManagerBgInit() {
-    console.log('Init tab manager background.');
-    dataRefresh();
-}
+let tabManagerBackground = new (class {
+    init() {
+        logger('init');
+        dataRefresh();
+        loaded = true;
+    }
+    loaded() {
+        return loaded;
+    }
+})();
+let tabContainer = new TabContainer();
+let searchStrs = {};
+let scrollPosition = {};
+let loaded = false;
 
 function dataRefresh() {
-    console.log('tabManager data refreshing.');
+    logger('tabManager data refreshing.');
     searchStrs = {};
-    getLatestTabList((tabList) => {
-        tabContainer = new TabContainer(tabList);
-    });
-}
-
-function getLatestTabList(callback) {
+    scrollPosition = {};
     chrome.tabs.query({}, apiTabs => {
         apiTabs.forEach(apiTab => {
-            apiTab = makeTabFromApiTab(apiTab, searchStrs[apiTab.windowId]);
+            apiTab = makeTabFromApiTab(apiTab);
         });
-
-        if (typeof(callback) == 'function') callback(apiTabs);
+        tabContainer.applyTablist(apiTabs);
     });
 }
 
 function changeTabSelect(windowId, tabId, select) {
-    if (select) tabContainer.get(windowId, tabId).managerSelect = select;
-    else tabContainer.get(windowId, tabId).managerSelect = !tabContainer.get(windowId, tabId).managerSelect;
+    if (select) tabContainer.getTabTab(windowId, tabId).managerSelect = select;
+    else tabContainer.getTab(windowId, tabId).managerSelect = !tabContainer.getTab(windowId, tabId).managerSelect;
 }
 
 function selectAllInWindow(windowId) {
-    tabContainer.getWindow(windowId).forEach(tab => {
+    tabContainer.getWindowTabArray(windowId).forEach(tab => {
         if (tab.matchSearch) {
             tab.managerSelect = true;
         }
     });
 }
 
-function cancelSelectInWindow(windowId) {
-    tabContainer.getWindow(windowId).forEach(tab => {
+function cancelSelectAllInWindow(windowId) {
+    tabContainer.getWindowTabArray(windowId).forEach(tab => {
         tab.managerSelect = false;
     });
 }
@@ -54,39 +58,42 @@ function isMatchSearch(tab, searchStr) {
 }
 
 function searchWithSearchStrInWindow(windowId) {
-    tabContainer.getWindow(windowId).forEach(tab => {
+    tabContainer.getWindowTabArray(windowId).forEach(tab => {
         tab.matchSearch = isMatchSearch(tab, searchStrs[windowId]);
     });
 }
 
 function onCreated(apiTab) {
-    console.log('oncreated');
+    logger('OnTabCreated:', apiTab);
     apiTab.title = 'Loading...';
 
-    tabContainer.add(makeTabFromApiTab(apiTab, searchStrs[apiTab.windowId]));
+    tabContainer.addTab(makeTabFromApiTab(apiTab, {
+        matchSearch: searchStrs[apiTab.windowId] ?
+            isMatchSearch(apiTab, searchStrs[apiTab.windowId]) : true
+    }));
     //sendMessageToWindowActive(attachInfo.newWindowId,"onTabAdd",{'tab':apiTtab});
-    sendMessageToWindowActive(apiTab.windowId, 'onTabAdd', { 'tab': apiTab });
+    sendToWindowActive(apiTab.windowId, { 'command': 'onTabAdd', 'tab': apiTab });
 
 }
 
 function onUpdated(tabId, changeInfo, apiTab) {
-    console.log('onUpdataed');
+    logger('onTabUpdataed:', apiTab);
     if (changeInfo.status != 'loading') {
-        let oldTab = tabContainer.get(apiTab.windowId, tabId);
-        let tab = makeTabFromApiTabWithInfo(apiTab, oldTab.managerSelect, oldTab.matchSearch);
+        let oldTab = tabContainer.getTab(apiTab.windowId, tabId);
+        let tab = makeTabFromApiTab(apiTab, { managerSelect: oldTab.managerSelect, matchSearch: oldTab.matchSearch });
 
-        tabContainer.set(tab.windowId, tab.id, tab);
+        tabContainer.setTab(tab.windowId, tab.id, tab);
 
-        //tabContainer.set(apiTab.windowId,tabId,apiTab);
-        sendMessageToWindowActive(apiTab.windowId, 'onTabChange', { 'tab': apiTab });
+        //tabContainer.setTab(apiTab.windowId,tabId,apiTab);
+        sendToWindowActive(apiTab.windowId, { 'command': 'onTabChange', 'tab': apiTab });
     }
 }
 
 function onRemove(tabId, removeInfo) {
     if (tabContainer.isWindowExist(removeInfo.windowId)) {
         if (removeInfo.isWindowClosing) { tabContainer.removeWindow(removeInfo.windowId); return; }
-        tabContainer.remove(removeInfo.windowId, tabId);
-        sendMessageToWindowActive(removeInfo.windowId, 'onTabRemove', { 'tabId': tabId });
+        tabContainer.removeTab(removeInfo.windowId, tabId);
+        sendToWindowActive(removeInfo.windowId, { 'command': 'onTabRemove', 'tabId': tabId });
     }
 }
 
@@ -96,56 +103,73 @@ function onActivated(activeInfo) {
 
 function onAttached(tabId, attachInfo) {
     chrome.tabs.get(tabId, apiTab => {
-        tabContainer.add(makeTabFromApiTab(apiTab, searchStrs[apiTab.windowId]));
+        tabContainer.addTab(makeTabFromApiTab(apiTab, {
+            matchSearch: searchStrs[apiTab.windowId] ?
+                isMatchSearch(apiTab, searchStrs[apiTab.windowId]) : true
+        }));
         //sendMessageToWindowActive(attachInfo.newWindowId,"onTabAdd",{'tab':apiTtab});
-        sendMessageToWindowActive(attachInfo.newWindowId, 'refreshManager');
+        sendToWindowActive(attachInfo.newWindowId, { 'command': 'refreshManager' });
     });
 }
 
 function onDetached(tabId, detachInfo) {
-    tabContainer.remove(detachInfo.oldWindowId, tabId);
-    sendMessageToWindowActive(detachInfo.oldWindowId, 'onTabRemove', { 'tabId': tabId });
+    tabContainer.removeTab(detachInfo.oldWindowId, tabId);
+    sendToWindowActive(detachInfo.oldWindowId, { 'command': 'onTabRemove', 'tabId': tabId });
 }
 
 function onMoved(tabId, moveInfo) {
-    tabContainer.move(moveInfo.windowId, tabId, moveInfo.fromIndex, moveInfo.toIndex);
-    sendMessageToWindowActive(moveInfo.windowId, 'refreshManager');
+    tabContainer.moveTab(moveInfo.windowId, tabId, moveInfo.fromIndex, moveInfo.toIndex);
+    sendToWindowActive(moveInfo.windowId, { 'command': 'refreshManager' });
 }
 
 //監聽內容腳本操作任務要求
 chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
+    function (request, sender, sendResponse) {
         if (request.command) {
             switch (request.command) {
                 case 'RefreshManager':
                     {
-                        tabManagerBgInit();
-                        sendMessageToActive('refreshManager');
+                        dataRefresh();
+                        sendToActive('refreshManager');
                         break;
                     }
 
-                    //切換分頁
+                //切換分頁
                 case 'ChangeCurentTab':
                     {
+                        if (!configs.tabManagerKeepSearchStrAfterSwitchTab) {
+                            searchStrs[request.windowId] = '';
+                            searchWithSearchStrInWindow(request.windowId);
+                        }
+                        if (!configs.tabManagerKeepSelectAfterSwitchTab) {
+                            cancelSelectAllInWindow(request.windowId);
+                        }
+
                         chrome.tabs.update(Number(request.tabId), { active: true }); //切換分頁
                         break;
                     }
 
-                    //取得分頁列表
+                //取得分頁列表
                 case 'getManagerInfo':
                     {
                         sendResponse({
-                            'list': tabContainer.getWindow(sender.tab.windowId),
+                            'list': tabContainer.getWindowTabArray(sender.tab.windowId),
                             'searchStr':
-                                (typeof(searchStrs[sender.tab.windowId]) != 'undefined') ?
-                                searchStrs[sender.tab.windowId] : searchStrs[sender.tab.windowId] = '',
+                                (typeof (searchStrs[sender.tab.windowId]) != 'undefined') ?
+                                    searchStrs[sender.tab.windowId] : searchStrs[sender.tab.windowId] = '',
                             'scrollPosition': scrollPosition[sender.tab.windowId] || 0
                         });
 
                         return true; //for asyc response,without cause sendresponse not work
                     }
 
-                    //關閉分頁
+                case 'getConfigs':
+                    {
+                        sendResponse(configs.appliedValues);
+                        break;
+                    }
+
+                //關閉分頁
                 case 'closeTabs':
                     {
                         chrome.tabs.remove(request.tabIds);
@@ -164,9 +188,9 @@ chrome.runtime.onMessage.addListener(
                         break;
                     }
 
-                case 'cancelSelect':
+                case 'cancelSelectAll':
                     {
-                        cancelSelectInWindow(sender.tab.windowId);
+                        cancelSelectAllInWindow(sender.tab.windowId);
                         break;
                     }
 
@@ -185,6 +209,7 @@ chrome.runtime.onMessage.addListener(
                         scrollPosition[sender.tab.windowId] = request.scrollPosition;
                         break;
                     }
+
             }
         }
     }
@@ -209,3 +234,5 @@ chrome.tabs.onActivated.addListener(onActivated);
 chrome.tabs.onAttached.addListener(onAttached);
 chrome.tabs.onDetached.addListener(onDetached);
 chrome.tabs.onMoved.addListener(onMoved);
+
+export default tabManagerBackground;

@@ -4,7 +4,6 @@ console.log('X');
 
 var sidebar = new (class {
     constructor() {
-        this.slideSpeed = 250; //設定開關時滑動時間
         this.onDisplayChange = new Listener(); //DisplayChangeEventHandler
         this.SIDEBAR_CLASS_NAME = 'zeromark_sidebar';
     }
@@ -27,6 +26,18 @@ var sidebar = new (class {
         document.body.appendChild(div);
 
         this._dom = div;
+
+        div.addEventListener('click', (e) => {
+            if (configs.sidebarHideAfterFocusLeave) {
+                e.stopImmediatePropagation();
+            }
+        });
+
+        document.addEventListener('click', () => {
+            if (configs.sidebarHideAfterFocusLeave && this.isOpened()) {
+                this.hide();
+            }
+        });
     }
 
     /**檢測Sidebar是否處於顯示狀態*/
@@ -47,7 +58,7 @@ var sidebar = new (class {
     show() {
         $(this._dom).show('slide', {
             direction: 'right'
-        }, this.slideSpeed);
+        }, configs.sidebarSlideTime);
         this._dom.focus();
         this.onDisplayChange.fire(this, {
             'type': 'show'
@@ -75,9 +86,11 @@ var sidebar = new (class {
     }
 })();
 
-
+let configs = {};
 
 window.onload = () => {
+    chrome.runtime.sendMessage({ command: 'getConfigs' }, (_configs) => { configs = _configs; });
+
     sidebar.Init();
     tabManager.Init();
 
@@ -96,18 +109,3 @@ window.onload = () => {
         }
     );
 };
-/*
-sidebar.initAfterList = [];
-sidebar.afterDOMInit = (callback) => {
-    sidebar.initAfterList.push(callback);
-}
-*/
-
-//鎖定右鍵
-/*  sidebar.jq.bind('contextmenu',function(e){
-      return false;    
-  });*/
-
-/*sidebar.initAfterList.forEach(callback => {
-    callback();
-});*/

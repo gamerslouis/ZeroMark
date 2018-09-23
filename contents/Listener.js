@@ -1,4 +1,4 @@
-export default class Listener {
+class Listener {
     constructor() {
         this.listeners = [];
     }

@@ -1,23 +1,9 @@
-function makeTabFromApiTab(apiTab, searchStr) {
-    apiTab.managerSelect = false;
-    apiTab.matchSearch = isMatchSearch(apiTab, searchStr);
-    return apiTab;
-}
-
-function makeTabFromApiTabWithInfo(apiTab, managerSelect, matchSearch) {
-    apiTab.managerSelect = managerSelect;
-    apiTab.matchSearch = matchSearch;
-    return apiTab;
-}
-
-
-class TabContainer {
-    constructor(tabList) {
+export default class TabContainer {
+    constructor() {
         this.container = {};
-        this.refresh(tabList);
     }
 
-    refresh(tabList) {
+    applyTablist(tabList) {
         tabList.forEach(tab => {
             if (!this.container[tab.windowId])
                 this.container[tab.windowId] = {};
@@ -25,23 +11,23 @@ class TabContainer {
         });
     }
 
-    get(windowId, tabId) {
+    getTab(windowId, tabId) {
         return this.container[windowId][tabId];
     }
 
-    getWindow(windowId) {
+    getWindowTabArray(windowId) {
         if (!this.container[windowId])
             this.container[windowId] = {};
-        return convertValueMapToArray(this.container[windowId]);
+        return Object.values(this.container[windowId]).sort((a, b) => { return a.index - b.index; });
     }
 
-    add(tab) {
+    addTab(tab) {
         if (!this.container[tab.windowId]) {
             this.container[tab.windowId] = {};
             this.container[tab.windowId][tab.id] = tab;
         }
         else {
-            for (const [key, _tab] of Object.entries(this.container[tab.windowId])) {
+            for (const [, _tab] of Object.entries(this.container[tab.windowId])) {
                 if (_tab.index >= tab.index)
                     _tab.index++;
             }
@@ -49,15 +35,15 @@ class TabContainer {
         }
     }
 
-    move(windowId, tabId, fromIndex, toIndex) {
+    moveTab(windowId, tabId, fromIndex, toIndex) {
         if (fromIndex > toIndex) {
-            for (const [key, tab] of Object.entries(this.container[windowId])) {
+            for (const [, tab] of Object.entries(this.container[windowId])) {
                 if (tab.index >= toIndex && tab.index < fromIndex)
                     tab.index++;
             }
         }
         else {
-            for (const [key, tab] of Object.entries(this.container[windowId])) {
+            for (const [, tab] of Object.entries(this.container[windowId])) {
                 if (tab.index > fromIndex && tab.index <= toIndex)
                     tab.index--;
             }
@@ -65,7 +51,7 @@ class TabContainer {
         this.container[windowId][tabId].index = toIndex;
     }
 
-    set(windowId, tabId, tab) {
+    setTab(windowId, tabId, tab) {
         if (!this.container[windowId])
             this.container[windowId] = {};
         this.container[windowId][tabId] = tab;
@@ -78,10 +64,10 @@ class TabContainer {
         });
     }
 
-    remove(windowId, tabId) {
+    removeTab(windowId, tabId) {
         if (tabId) //no windowId ,only tabId defined
         {
-            for (const [key, tab] of Object.entries(this.container[windowId])) {
+            for (const [, tab] of Object.entries(this.container[windowId])) {
                 if (tab.index > this.container[windowId][tabId].index)
                     tab.index--;
             }
@@ -91,7 +77,7 @@ class TabContainer {
             for (const [key, window] of Object.entries(this.container)) {
                 for (const [key2, tab] of Object.entries(window)) {
                     if (tab.id == tabId) {
-                        for ([key3, _tab] of Object.entries(window)) {
+                        for (let [, _tab] of Object.entries(window)) {
                             if (_tab.index > tab.index)
                                 _tab.index--;
                         }
@@ -117,8 +103,8 @@ class TabContainer {
         }
         else {
             let b = false;
-            for (const [key, window] of Object.entries(this.container)) {
-                for (const [key2, tab] of Object.entries(window)) {
+            for (const [, window] of Object.entries(this.container)) {
+                for (const [, tab] of Object.entries(window)) {
                     b = b || (tab.id = windowId);
                     if (b)
                         return b;

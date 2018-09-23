@@ -54,9 +54,11 @@ var tabManager = new (class {
                 //分頁切換控制
                 else if (e.eventPhase == 3)//bubbling,trigger is listItem
                 {
+                    if (configs.tabManagerCloseSidebarAfterSwitchTab) sidebar.hide();
                     chrome.runtime.sendMessage({
                         'command': 'ChangeCurentTab',
-                        'tabId': this.getListItemByChild(e.target).tab.id
+                        'tabId': this.getListItemByChild(e.target).tab.id,
+                        'windowId': this.windowId
                     }); //呼叫後台切換分頁
                 }
             }).bind(this));//觸發於bubbling階段，若triger為closeButton則中斷事件傳遞
@@ -72,7 +74,7 @@ var tabManager = new (class {
                         e.preventDefault();
                     };
                     if (e.which == 27) {
-                        this.cancelSelct();
+                        this.cancelSelctAll();
                         stopEvent(e);
                     } else if (e.which == 46) {
                         this.closeTabSelect();
@@ -124,9 +126,9 @@ var tabManager = new (class {
     }
 
 
-    cancelSelct() {
+    cancelSelctAll() {
         chrome.runtime.sendMessage({
-            command: 'cancelSelect'
+            command: 'cancelSelectAll'
         });
         for (let d of this.tabList.getElementsByClassName(this.classNames.listItem)) {
             d.classList.remove(this.classNames.listItem_selected);
@@ -145,11 +147,11 @@ var tabManager = new (class {
     makeListItem(tab) {
         let div = document.createElement('div');
         div.className = `${this.classNames.listItem} ${tab.managerSelect ? this.classNames.listItem_selected : ''} ${tab.matchSearch ? '' : this.classNames.listItem_ivisible}`;
-        div.innerHTML = `<span class='${this.classNames.innerSpan}'>
-                            <img class='${this.classNames.favicon}' src='${((tab.favIconUrl != null) ? tab.favIconUrl : chrome.extension.getURL('imgs/difaultFavicon.png'))}'>
-                            <span class='${this.classNames.title}'>${htmlEncode(tab.title)}</span>
-                        </span>
-                        <img src='${chrome.extension.getURL('imgs/closeButton.png')}' class='${this.classNames.closeButton}' height='20' width='20'/>`;
+        div.innerHTML = `<span class='${this.classNames.innerSpan}'>`+
+                            (configs.tabManagerShowFavicon ? `<img class='${this.classNames.favicon}' src='${((tab.favIconUrl != null) ? tab.favIconUrl : chrome.extension.getURL('imgs/difaultFavicon.png'))}'>`:'')+
+                            `<span class='${this.classNames.title}'>${htmlEncode(tab.title)}</span>
+                        </span>`+
+                        (configs.tabManagerShowCloseButton?`<img src='${chrome.extension.getURL('imgs/closeButton.png')}' class='${this.classNames.closeButton}' height='20' width='20'/>`:'');
         div.tab = tab;
         this.listItemIdMap[tab.id] = div;
 
@@ -194,7 +196,7 @@ var tabManager = new (class {
     closeTabSelect() {
         let tabIds = [];
         let listItems = this.tabList.getElementsByClassName(this.classNames.listItem_selected);
-        for (let i = listItems.length-1; i >0 ; i--) {
+        for (let i = listItems.length-1; i >=0 ; i--) {
             tabIds.push(listItems[i].tab.id);
             delete this.listItemIdMap[listItems[i].tab.id];
             this.tabList.removeChild(listItems[i]);
@@ -209,7 +211,6 @@ var tabManager = new (class {
     refreshTabManager(withSearchStr = true) {
         if (this.flagUpdating || this.unLoaded) return;
         else this.flagUpdating = true;
-        console.log('updating');
         this.cleanManagerList();
 
         chrome.runtime.sendMessage({
@@ -279,7 +280,7 @@ var tabManager = new (class {
 
 
                         if (!e.ctrlKey) {
-                            this.cancelSelct();
+                            this.cancelSelctAll();
                         }
                         else {
                             this.lastSelectId = e.currentTarget.tab.id;
@@ -367,15 +368,11 @@ chrome.runtime.onMessage.addListener(
                 {
                     if (tabManager.listItemIdMap[request.tab.id] == undefined) {
                         tabManager.insertListItem(request.tab);
-                        console.log('1');
                     }
                     else {
-                        console.log('2');
                         let old = tabManager.listItemIdMap[request.tab.id];
                         let div = tabManager.makeListItem(request.tab);
-                        //tabManager.tabList.appendChild(div);
                         old.replaceWith(div);
-                        tabManager.tabList.removeChild(old);
                     }
                     break;
                 }
