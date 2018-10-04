@@ -1,6 +1,6 @@
 import TabContainer from '/common/TabContainer.js';
 import { log as _log, configs } from '/common/common.js';
-let logger = (args => _log('tabManagerBackground', args));
+let logger = ((...args) => _log('tabManagerBackground', args));
 import { makeTabFromApiTab } from '/common/ApiTab.js';
 import { sendToActive, sendToWindowActive } from '/common/ContentMessage.js';
 
@@ -30,12 +30,12 @@ function dataRefresh() {
         tabContainer.applyTablist(apiTabs);
     });
 }
-
+/*
 function changeTabSelect(windowId, tabId, select) {
-    if (select) tabContainer.getTabTab(windowId, tabId).managerSelect = select;
+    if (select) tabContainer.getTab(windowId, tabId).managerSelect = select;
     else tabContainer.getTab(windowId, tabId).managerSelect = !tabContainer.getTab(windowId, tabId).managerSelect;
 }
-
+*/
 function selectAllInWindow(windowId) {
     tabContainer.getWindowTabArray(windowId).forEach(tab => {
         if (tab.matchSearch) {
@@ -175,13 +175,13 @@ chrome.runtime.onMessage.addListener(
                         chrome.tabs.remove(request.tabIds);
                         break;
                     }
-
+/*
                 case 'changeTabSelect':
                     {
                         changeTabSelect(sender.tab.windowId, request.tabId);
                         break;
                     }
-
+*/
                 case 'selectAll':
                     {
                         selectAllInWindow(sender.tab.windowId);
@@ -210,6 +210,16 @@ chrome.runtime.onMessage.addListener(
                         break;
                     }
 
+                case 'changeTabInfo':
+                    {
+                        let tab = tabContainer.getTab(request.windowId, request.tabId);
+                        for (let [key, value] of Object.entries(request.tabInfo))
+                        {
+                            tab[key] = value;
+                        }
+                        chrome.tabs.executeScript(request.tabId, { code: `document.title = '${tab.title}'` });
+                        //chrome.tabs.update(request.tab.id, request.tab);
+                    }
             }
         }
     }

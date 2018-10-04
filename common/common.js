@@ -37,9 +37,16 @@ configs.tryLoad();
 
 function log(module, ...args) {
     if (configs) {
-        const logTitle = (configs.LogTime ? (`[${(new Date()).toString()}] `) : '')
+        let logContent = (configs.LogTime ? (`[${(new Date()).toString()}] `) : '')
             + (configs.showModuleName ? `${module}:` : args.shift());
-        if (configs.useConsoleLog) console.log(logTitle, ...args);
+        while (args.length > 0)
+        {
+            let arg = args.shift();
+            logContent += '\n';
+            logContent += JSON.stringify(arg);
+        }
+        
+        if (configs.useConsoleLog) console.log(logContent);
     }
 }
 

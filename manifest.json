@@ -29,7 +29,7 @@
         "matches": ["*://*/*"],
         "js": ["thirdParty/jquery-ui-1.12.1.custom/external/jquery/jquery.js",
             "thirdParty/jquery-ui-1.12.1.custom/jquery-ui.js",
-            "contents/Listener.js",
+            "contents/common/Listener.js",
             "contents/sidebar.js",
             "contents/tabManager.js"
         ],

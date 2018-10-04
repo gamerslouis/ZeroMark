@@ -36,9 +36,10 @@ var tabManager = new (class {
         div.className = 'zeromark_tabManager';
         div.style = 'height: 95%;width: 300px;';
         this._tabManager = div;
-        $.get(chrome.extension.getURL('/contents/tabManagerDesign.html'), content => {
+        fetch(chrome.extension.getURL('/contents/tabManagerDesign.html')).then((res) => {
+            return res.text();
+        }).then((content) => {
             div.innerHTML = content;
-        }).then(() => {
             sidebar.append(div);
             this.searchBar = div.getElementsByClassName('zeromark_tabManager_tabSearchBar')[0];
             this.tabList = div.getElementsByClassName('zeromark_tabManager_tabList')[0];
@@ -62,9 +63,6 @@ var tabManager = new (class {
                     }); //呼叫後台切換分頁
                 }
             }).bind(this));//觸發於bubbling階段，若triger為closeButton則中斷事件傳遞
-
-            //監聽listItem層級滑鼠事件
-
 
             //監聽全域按鍵事件
             document.onkeydown = ((e) => {
@@ -151,7 +149,7 @@ var tabManager = new (class {
                             (configs.tabManagerShowFavicon ? `<img class='${this.classNames.favicon}' src='${((tab.favIconUrl != null) ? tab.favIconUrl : chrome.extension.getURL('imgs/difaultFavicon.png'))}'>`:'')+
                             `<span class='${this.classNames.title}'>${htmlEncode(tab.title)}</span>
                         </span>`+
-                        (configs.tabManagerShowCloseButton?`<img src='${chrome.extension.getURL('imgs/closeButton.png')}' class='${this.classNames.closeButton}' height='20' width='20'/>`:'');
+            (configs.tabManagerShowCloseButton ? `<img src='${chrome.extension.getURL('imgs/closeButton.png')}' class='${this.classNames.closeButton}' height='20' width='20'/>` : '');
         div.tab = tab;
         this.listItemIdMap[tab.id] = div;
 
@@ -196,7 +194,7 @@ var tabManager = new (class {
     closeTabSelect() {
         let tabIds = [];
         let listItems = this.tabList.getElementsByClassName(this.classNames.listItem_selected);
-        for (let i = listItems.length-1; i >=0 ; i--) {
+        for (let i = listItems.length - 1; i >= 0; i--) {
             tabIds.push(listItems[i].tab.id);
             delete this.listItemIdMap[listItems[i].tab.id];
             this.tabList.removeChild(listItems[i]);
@@ -235,20 +233,35 @@ var tabManager = new (class {
         });
     }
 
+    //監聽listItem層級滑鼠事件
     onListItemClick(e) {
         switch (e.which) {
             case 1:
                 {
                     if (e.ctrlKey || e.shiftKey) {
                         let changeSelect = (listItem) => {
-                            chrome.runtime.sendMessage({
-                                'command': 'changeTabSelect',
-                                'tabId': listItem.tab.id
-                            });
                             if (listItem.classList.contains(this.classNames.listItem_selected)) {
                                 listItem.classList.remove(this.classNames.listItem_selected);
+                                chrome.runtime.sendMessage({
+                                    'command': 'changeTabInfo',
+                                    'windowId': this.thisWindowId,
+                                    'tabId': listItem.tab.id,
+                                    tabInfo: {
+                                        'managerSelect': false
+                                    }
+                                });
                             }
-                            else listItem.classList.add(this.classNames.listItem_selected);
+                            else {
+                                listItem.classList.add(this.classNames.listItem_selected);
+                                chrome.runtime.sendMessage({
+                                    'command': 'changeTabInfo',
+                                    'windowId': this.thisWindowId,
+                                    'tabId': listItem.tab.id,
+                                    tabInfo: {
+                                        'managerSelect': true
+                                    }
+                                });
+                            }
                         };
 
                         let changeSelectRange = (listItemFrom, listItemTo, select) => {
@@ -307,8 +320,6 @@ var tabManager = new (class {
                         else {
                             changeSelect(e.currentTarget);
                         }
-                        e.stopPropagation();
-                        e.preventDefault();
                     }
                     break;
                 }
@@ -316,19 +327,17 @@ var tabManager = new (class {
             case 2:
                 {
                     this.closeTab(e.currentTarget);
-                    e.stopPropagation();
-                    e.preventDefault();
                     break;
                 }
             //滑鼠右鍵
             case 3:
                 {
                     e.stopPropagation();
-                    e.preventDefault();
                     break;
                 }
         }
-        //return false;
+        e.preventDefault();
+        return false;
     }
 
 })();
@@ -382,3 +391,4 @@ chrome.runtime.onMessage.addListener(
         }
     })
 );
+

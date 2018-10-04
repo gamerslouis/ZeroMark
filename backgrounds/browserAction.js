@@ -1,5 +1,5 @@
 import { log as _log, configs } from '/common/common.js';
-let logger = (args => _log('browserAction', args));
+let logger = ((...args) => _log('browserAction', args));
 
 let browserAction = new (class {
     constructor() {
