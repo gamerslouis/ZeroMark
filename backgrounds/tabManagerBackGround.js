@@ -80,7 +80,7 @@ function onUpdated(tabId, changeInfo, apiTab) {
     logger('onTabUpdataed:', apiTab);
     if (changeInfo.status != 'loading') {
         let oldTab = tabContainer.getTab(apiTab.windowId, tabId);
-        let tab = makeTabFromApiTab(apiTab, { managerSelect: oldTab.managerSelect, matchSearch: oldTab.matchSearch });
+        let tab = makeTabFromApiTab(apiTab, oldTab);
 
         tabContainer.setTab(tab.windowId, tab.id, tab);
 

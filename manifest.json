@@ -1,41 +1,43 @@
 {
     "manifest_version": 2,
-
     "name": "ZeroMark",
     "description": "Easy Manage your tabs and marks",
     "version": "0.5.0",
-
     "permissions": [
         "activeTab",
         "tabs",
         "storage",
         "bookmarks",
         "contextMenus",
-        "unlimitedStorage"
+        "unlimitedStorage",
+        "notifications",
+        "http://*/",
+        "https://*/"
     ],
-
     "background": {
-        "page":"backgrounds/background.html",
+        "page": "backgrounds/background.html",
         "persistent": true
     },
-
     "options_page": "options.html",
-
     "browser_action": {
         "default_icon": "imgs/icon.png"
     },
-
-    "content_scripts": [{
-        "matches": ["*://*/*"],
-        "js": ["thirdParty/jquery-ui-1.12.1.custom/external/jquery/jquery.js",
-            "thirdParty/jquery-ui-1.12.1.custom/jquery-ui.js",
-            "contents/common/Listener.js",
-            "contents/sidebar.js",
-            "contents/tabManager.js"
-        ],
-        "run_at": "document_end"
-    }],
-
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*/*"
+            ],
+            "js": [
+                "thirdParty/jquery-ui-1.12.1.custom/external/jquery/jquery.js",
+                "thirdParty/jquery-ui-1.12.1.custom/jquery-ui.js",
+                "contents/markBox.js",
+                "contents/common/Listener.js",
+                "contents/sidebar.js",
+                "contents/tabManager.js"
+            ],
+            "run_at": "document_end"
+        }
+    ],
     "commands": {
         "key_openSidebar": {
             "suggested_key": {
@@ -44,7 +46,10 @@
             "description": "Open TabManager"
         }
     },
-
-    "web_accessible_resources": ["contents/tabManagerDesign.html", "imgs/*"],
+    "web_accessible_resources": [
+        "contents/tabManagerDesign.html",
+        "imgs/*",
+        "contents/markBox.html"
+    ],
     "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'"
 }

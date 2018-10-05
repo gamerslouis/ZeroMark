@@ -6,6 +6,8 @@ var tabManager = new (class {
         this.tabList = new Object();
         this._tabManager = new Object;
         this.listItemIdMap = {};
+        this.contextmenu = new Object();
+        this.markBox = new MarkBox();
 
         this.unLoaded = true;
         this.flagUpdating = false;
@@ -145,9 +147,10 @@ var tabManager = new (class {
     makeListItem(tab) {
         let div = document.createElement('div');
         div.className = `${this.classNames.listItem} ${tab.managerSelect ? this.classNames.listItem_selected : ''} ${tab.matchSearch ? '' : this.classNames.listItem_ivisible}`;
-        div.innerHTML = `<span class='${this.classNames.innerSpan}'>`+
-                            (configs.tabManagerShowFavicon ? `<img class='${this.classNames.favicon}' src='${((tab.favIconUrl != null) ? tab.favIconUrl : chrome.extension.getURL('imgs/difaultFavicon.png'))}'>`:'')+
-                            `<span class='${this.classNames.title}'>${htmlEncode(tab.title)}</span>
+        div.style.backgroundColor = tab.labelColor;
+        div.innerHTML = `<span class='${this.classNames.innerSpan}'>` +
+            (configs.tabManagerShowFavicon ? `<img class='${this.classNames.favicon}' src='${((tab.favIconUrl != null) ? tab.favIconUrl : chrome.extension.getURL('imgs/difaultFavicon.png'))}'>` : '') +
+            `<span class='${this.classNames.title}'>${htmlEncode(tab.title)}</span>
                         </span>`+
             (configs.tabManagerShowCloseButton ? `<img src='${chrome.extension.getURL('imgs/closeButton.png')}' class='${this.classNames.closeButton}' height='20' width='20'/>` : '');
         div.tab = tab;
@@ -332,6 +335,27 @@ var tabManager = new (class {
             //滑鼠右鍵
             case 3:
                 {
+                    this.markBox.show(e.currentTarget.tab, e.clientX - 270, e.clientY, (change) => {
+                        switch (change.type) {
+                            case 'title':
+                                {
+                                    this.listItemIdMap[change.tabId].tab.title = change.value;
+                                    break;
+                                }
+                            case 'labelColor':
+                                {
+                                    this.listItemIdMap[change.tabId].tab.labelColor = change.value;
+                                    break;
+                                }
+                        }
+                        this.listItemIdMap[change.tabId].replaceWith(this.makeListItem(this.listItemIdMap[change.tabId].tab));
+                        chrome.runtime.sendMessage({
+                            'command': 'changeTabInfo',
+                            'windowId': this.thisWindowId,
+                            'tabId': change.tabId,
+                            'tabInfo': { [change.type]: change.value }
+                        });
+                    });
                     e.stopPropagation();
                     break;
                 }

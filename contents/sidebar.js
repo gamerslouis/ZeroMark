@@ -18,7 +18,7 @@ var sidebar = new (class {
         div.style.position = 'fixed';
         div.style.top = '0px';
         div.style.right = '0px';
-        div.style.zIndex = '90000000';
+        div.style.zIndex = '9000000';
         div.style.display = 'none';
         div.style.borderStyle = 'none';
         div.frameBorder = 'none';
@@ -38,6 +38,8 @@ var sidebar = new (class {
                 this.hide();
             }
         });
+
+        div.oncontextmenu = () => { return false; };
     }
 
     /**檢測Sidebar是否處於顯示狀態*/
