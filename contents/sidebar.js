@@ -58,7 +58,7 @@ var sidebar = new (class {
 
     /**顯示Sidebar視窗*/
     show() {
-        $(this._dom).show('slide', {
+        JQ(this._dom).show('slide', {
             direction: 'right'
         }, configs.sidebarSlideTime);
         this._dom.focus();
@@ -69,7 +69,7 @@ var sidebar = new (class {
 
     /**關閉Sidebar視窗*/
     hide() {
-        $(this._dom).hide('slide', {
+        JQ(this._dom).hide('slide', {
             direction: 'right'
         }, this.slideSpeed);
         this.onDisplayChange.fire(this, {
@@ -99,6 +99,16 @@ window.onload = () => {
     chrome.runtime.onMessage.addListener(
         function (request/*, sender, sendResponse*/) {
             switch (request.command) {
+                case 'onConfigChange':
+                    {
+                        if (request.config.key == 'sidebarSlideTime' ||
+                            request.config.key == 'sidebarHideAfterFocusLeave'
+                        ) {
+                            configs[request.config.key] = request.config.value;
+                        } 
+                        break;
+                    }
+
                 case 'key_openSidebar': //熱鍵觸發
                     {
                         sidebar.changeDisplay(null);

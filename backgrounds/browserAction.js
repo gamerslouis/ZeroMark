@@ -1,4 +1,5 @@
-import { log as _log, configs } from '/common/common.js';
+import configs from '/common/realConfigs.js';
+import { log as _log } from '/common/common.js';
 let logger = ((...args) => _log('browserAction', args));
 
 let browserAction = new (class {
@@ -13,23 +14,17 @@ let browserAction = new (class {
 
         });
 
-        if (configs.BrowserShowTabCounts) this.enableBadge();
-
-    }
-
-    enableBadge() {
+        chrome.tabs.onActivated.addListener(this.UpdateBadgeText);
         chrome.tabs.onCreated.addListener(this.UpdateBadgeText);
         chrome.tabs.onRemoved.addListener(this.UpdateBadgeText);
         chrome.browserAction.setBadgeBackgroundColor({ color: configs.BrowserTabCountsColor });
-        this.UpdateBadgeText();
-    }
+        configs.onConfigChange.addListener(this.onConfigChange.bind(this));
 
-    disableBadge() {
-        chrome.tabs.onCreated.removeListener(this.UpdateBadgeText);
-        chrome.tabs.onRemoved.removeListener(this.UpdateBadgeText);
+        if (configs.BrowserShowTabCounts) this.UpdateBadgeText();
     }
 
     UpdateBadgeText() {
+        if (!configs.BrowserShowTabCounts) return;
         if (configs.BrowserShowAllWindowsTabCounts) {
             chrome.tabs.query({}, tabs => {
                 let text = (tabs.length > 999 && configs.BrowserTabCountsShowFullWithThousandTabs)
@@ -55,7 +50,11 @@ let browserAction = new (class {
             case 'BrowserShowTabCounts':
                 {
                     if (args.value) { this.enableBadge(); }
-                    else { this.disableBadge(); }
+                    else {
+                        chrome.tabs.query({}, tabs => {
+                            chrome.browserAction.setBadgeText({ 'text': '' });
+                        });
+                    }
                     break;
                 }
             case 'BrowserTabCountsColor':

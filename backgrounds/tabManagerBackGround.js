@@ -1,5 +1,6 @@
 import TabContainer from '/common/TabContainer.js';
-import { log as _log, configs } from '/common/common.js';
+import configs from '/common/realConfigs.js';
+import { log as _log } from '/common/common.js';
 let logger = ((...args) => _log('tabManagerBackground', args));
 import { makeTabFromApiTab } from '/common/ApiTab.js';
 import { sendToActive, sendToWindowActive } from '/common/ContentMessage.js';
@@ -53,7 +54,7 @@ function cancelSelectAllInWindow(windowId) {
 function isMatchSearch(tab, searchStr) {
     if (searchStr == '') return true;
     let reg = RegExp(searchStr, 'i');
-    let b = reg.test(tab.title) || reg.test(tab.url);
+    let b = reg.test(tab.title) || reg.test(tab.url) || reg.test(tab.tagName);
     return b;
 }
 
@@ -98,7 +99,14 @@ function onRemove(tabId, removeInfo) {
 }
 
 function onActivated(activeInfo) {
-    chrome.tabs.sendMessage(activeInfo.tabId, { command: 'refreshManager' });
+    if (!configs.tabManagerKeepSearchStrAfterSwitchTab) {
+        searchStrs[request.windowId] = '';
+        searchWithSearchStrInWindow(request.windowId);
+    }
+    if (!configs.tabManagerKeepSelectAfterSwitchTab) {
+        cancelSelectAllInWindow(request.windowId);
+    }
+    chrome.tabs.sendMessage(activeInfo.tabId, { command: 'refreshManager',onActivated:true });
 }
 
 function onAttached(tabId, attachInfo) {
@@ -137,14 +145,6 @@ chrome.runtime.onMessage.addListener(
                 //切換分頁
                 case 'ChangeCurentTab':
                     {
-                        if (!configs.tabManagerKeepSearchStrAfterSwitchTab) {
-                            searchStrs[request.windowId] = '';
-                            searchWithSearchStrInWindow(request.windowId);
-                        }
-                        if (!configs.tabManagerKeepSelectAfterSwitchTab) {
-                            cancelSelectAllInWindow(request.windowId);
-                        }
-
                         chrome.tabs.update(Number(request.tabId), { active: true }); //切換分頁
                         break;
                     }
@@ -161,12 +161,6 @@ chrome.runtime.onMessage.addListener(
                         });
 
                         return true; //for asyc response,without cause sendresponse not work
-                    }
-
-                case 'getConfigs':
-                    {
-                        sendResponse(configs.appliedValues);
-                        break;
                     }
 
                 //關閉分頁

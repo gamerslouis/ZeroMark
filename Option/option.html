@@ -1,0 +1,100 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>ZeroMark Options</title>
+    <script type="module" src="./option.js"></script>
+</head>
+
+<body>
+    <section id='section-sidebar'>
+        <h1>Siderbar</h1>
+
+        <p>滑出速度
+            <label>
+                <input type="radio" name="sidebarSlideTime" value="1">及時
+            </label>
+            <label>
+                <input type="radio" name="sidebarSlideTime" value="200">快
+            </label>
+            <label>
+                <input type="radio" name="sidebarSlideTime" value="400">中等
+            </label>
+            <label>
+                <input type="radio" name="sidebarSlideTime" value="600">慢
+            </label>
+        </p>
+        <p>
+            <label>
+                <input name="sidebarHideAfterFocusLeave" type="checkbox">當焦點離開時關閉管理器
+            </label>
+        </p>
+    </section>
+
+    <section id="section-tabmanager">
+        <h1>TabManager</h1>
+
+        <p>
+            <label>
+                <input name="tabManagerKeepSearchStrAfterSwitchTab" type="checkbox">切換視窗後保留搜尋
+            </label>
+        </p>
+        <p>
+            <label>
+                <input name="tabManagerKeepSelectAfterSwitchTab" type="checkbox">切換視窗後保留分頁選取
+            </label>
+        </p>
+        <p>
+            <label>
+                <input name="tabManagerShowFavicon" type="checkbox">顯示分頁圖示
+            </label>
+        </p>
+        <p>
+            <label>
+                <input name="tabManagerShowCloseButton" type="checkbox">顯示分頁關閉按鈕
+            </label>
+        </p>
+    </section>
+
+    <section id="section-browser">
+        <h1>Browser Icon</h1>
+
+        <p>
+            <label>
+                <input name="BrowserShowTabCounts" type="checkbox">顯示分頁數量
+            </label>
+        </p>
+        <p>
+            <label>
+                <input name="BrowserTabCountsShowFullWithThousandTabs" type="checkbox">分頁數量過千後顯示Full
+            </label>
+        </p>
+        <p>
+            <label>
+                <input name="BrowserShowAllWindowsTabCounts" type="checkbox">顯示所有視窗總分頁數
+            </label>
+        </p>
+    </section>
+
+    <section id="section-log">
+        <h1>Log</h1>
+
+        <p>
+            <label>
+                <input name="useConsoleLog" type="checkbox">顯示偵錯訊息
+            </label>
+        </p>
+        <p>
+            <label>
+                <input name="LogTime" type="checkbox">紀錄時間
+            </label>
+        </p>
+        <p>
+            <label>
+                <input name="showModuleName" type="checkbox">顯示模組名稱
+            </label>
+        </p>
+    </section>
+</body>
+
+</html>

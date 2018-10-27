@@ -1,42 +1,46 @@
-import Listner from './Listener.js';
+import Listener from './Listener.js';
 
 export default class Configs {
     constructor($default = {}, logger = null) {
         this.$default = $default;
         this.logger = logger || (() => { });
         this.appliedValues = {};
-        this.listner = new Listner();
-        this.available = false;
+        this.onConfigChange = new Listener();
+        this.loaded = false;
 
-        this.applyValues($default);
+        this._applyValues($default);
     }
 
     tryLoad() {
         try {
-            let localConfigs = chrome.storage.local.get('configs');
-            this.applyValues(localConfigs);
+            chrome.storage.local.get('configs', (e) => {
+                let localConfigs = e.configs;
+                this._applyValues(localConfigs);
+            });
         }
-        catch(error){
+        catch (error) {
             this.logger('Fail to load local configs');
-        }
-        finally {
-            this.available = true;
+            this.loaded = true;
         }
     }
 
-    trySave(valuePairs) {
+    trySave(key,value) {
         try {
-            chrome.storage.local.set({ 'configs': valuePairs });
+            chrome.storage.local.get('configs', (e) => {
+                let localConfigs = e.configs;
+                localConfigs[key] = value;
+                chrome.storage.local.set({ 'configs': localConfigs });
+            });
         } catch (error) {
-            this.logger(`Fail to write local storage with ${valuePairs}`);
+            this.logger(`Fail to write local storage with ${key}:${value}`);
         }
     }
 
-    applyValues(valuePairs) {
-        if(this.available) this.logger('Applied values:', valuePairs);
+    _applyValues(valuePairs) {
+        if (this.loaded) this.logger('Applied values:', valuePairs);
         for (const [key, value] of Object.entries(valuePairs)) {
             this.appliedValues[key] = value;
-            if(this.available) this.listner.fire({ 'key': key, 'value': value });
+            if (this.loaded) this.onConfigChange.fire({ 'key': key, 'value': value });
             if (key in this) continue;
             Object.defineProperty(this, key, {
                 get: () => this.appliedValues[key],
@@ -47,8 +51,8 @@ export default class Configs {
 
     setValue(key, value) {
         if (key in this) {
-            this.applyValues({ [key]: value });
-            this.trySave({ [key]: value });
+            this._applyValues({ [key]: value });
+            this.trySave(key,value);
         }
         else {
             this.logger(`Fail to set config because ${key} is not aviable property`);

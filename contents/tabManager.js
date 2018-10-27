@@ -57,11 +57,10 @@ var tabManager = new (class {
                 //分頁切換控制
                 else if (e.eventPhase == 3)//bubbling,trigger is listItem
                 {
-                    if (configs.tabManagerCloseSidebarAfterSwitchTab) sidebar.hide();
                     chrome.runtime.sendMessage({
                         'command': 'ChangeCurentTab',
                         'tabId': this.getListItemByChild(e.target).tab.id,
-                        'windowId': this.windowId
+                        'windowId': this.thisWindowId
                     }); //呼叫後台切換分頁
                 }
             }).bind(this));//觸發於bubbling階段，若triger為closeButton則中斷事件傳遞
@@ -150,7 +149,7 @@ var tabManager = new (class {
         div.style.backgroundColor = tab.labelColor;
         div.innerHTML = `<span class='${this.classNames.innerSpan}'>` +
             (configs.tabManagerShowFavicon ? `<img class='${this.classNames.favicon}' src='${((tab.favIconUrl != null) ? tab.favIconUrl : chrome.extension.getURL('imgs/difaultFavicon.png'))}'>` : '') +
-            `<span class='${this.classNames.title}'>${htmlEncode(tab.title)}</span>
+            `<span class='${this.classNames.title}'>${htmlEncode(tab.taged?tab.tagName:tab.title)}</span>
                         </span>`+
             (configs.tabManagerShowCloseButton ? `<img src='${chrome.extension.getURL('imgs/closeButton.png')}' class='${this.classNames.closeButton}' height='20' width='20'/>` : '');
         div.tab = tab;
@@ -336,15 +335,20 @@ var tabManager = new (class {
             case 3:
                 {
                     this.markBox.show(e.currentTarget.tab, e.clientX - 270, e.clientY, (change) => {
+                        let changes = { };
                         switch (change.type) {
                             case 'title':
                                 {
-                                    this.listItemIdMap[change.tabId].tab.title = change.value;
+                                    this.listItemIdMap[change.tabId].tab.tagName = change.value;
+                                    this.listItemIdMap[change.tabId].tab.taged = true;
+                                    changes.tagName = change.value;
+                                    changes.taged = true;
                                     break;
                                 }
                             case 'labelColor':
                                 {
                                     this.listItemIdMap[change.tabId].tab.labelColor = change.value;
+                                    changes.labelColor = change.value;
                                     break;
                                 }
                         }
@@ -353,7 +357,7 @@ var tabManager = new (class {
                             'command': 'changeTabInfo',
                             'windowId': this.thisWindowId,
                             'tabId': change.tabId,
-                            'tabInfo': { [change.type]: change.value }
+                            'tabInfo': changes
                         });
                     });
                     e.stopPropagation();
@@ -370,7 +374,7 @@ var tabManager = new (class {
 function htmlEncode(value) {
     //create a in-memory div, set it's inner text(which jQuery automatically encodes)
     //then grab the encoded contents back out.  The div never exists on the page.
-    return $('<div/>').text(value).html();
+    return JQ('<div/>').text(value).html();
 }
 
 chrome.runtime.onMessage.addListener(
@@ -407,6 +411,16 @@ chrome.runtime.onMessage.addListener(
                         let div = tabManager.makeListItem(request.tab);
                         old.replaceWith(div);
                     }
+                    break;
+                }
+            
+            case 'onConfigChange':
+                {
+                    if (request.config.key == 'tabManagerShowFavicon' ||
+                        request.config.key == 'tabManagerShowCloseButton') {
+                        configs[request.config.key] = request.config.value;
+                        tabManager.refreshTabManager();
+                        } 
                     break;
                 }
 
