@@ -31,12 +31,7 @@ function dataRefresh() {
         tabContainer.applyTablist(apiTabs);
     });
 }
-/*
-function changeTabSelect(windowId, tabId, select) {
-    if (select) tabContainer.getTab(windowId, tabId).managerSelect = select;
-    else tabContainer.getTab(windowId, tabId).managerSelect = !tabContainer.getTab(windowId, tabId).managerSelect;
-}
-*/
+
 function selectAllInWindow(windowId) {
     tabContainer.getWindowTabArray(windowId).forEach(tab => {
         if (tab.matchSearch) {
@@ -72,7 +67,6 @@ function onCreated(apiTab) {
         matchSearch: searchStrs[apiTab.windowId] ?
             isMatchSearch(apiTab, searchStrs[apiTab.windowId]) : true
     }));
-    //sendMessageToWindowActive(attachInfo.newWindowId,"onTabAdd",{'tab':apiTtab});
     sendToWindowActive(apiTab.windowId, { 'command': 'onTabAdd', 'tab': apiTab });
 
 }
@@ -85,7 +79,6 @@ function onUpdated(tabId, changeInfo, apiTab) {
 
         tabContainer.setTab(tab.windowId, tab.id, tab);
 
-        //tabContainer.setTab(apiTab.windowId,tabId,apiTab);
         sendToWindowActive(apiTab.windowId, { 'command': 'onTabChange', 'tab': apiTab });
     }
 }
@@ -115,7 +108,6 @@ function onAttached(tabId, attachInfo) {
             matchSearch: searchStrs[apiTab.windowId] ?
                 isMatchSearch(apiTab, searchStrs[apiTab.windowId]) : true
         }));
-        //sendMessageToWindowActive(attachInfo.newWindowId,"onTabAdd",{'tab':apiTtab});
         sendToWindowActive(attachInfo.newWindowId, { 'command': 'refreshManager' });
     });
 }
@@ -169,13 +161,7 @@ chrome.runtime.onMessage.addListener(
                         chrome.tabs.remove(request.tabIds);
                         break;
                     }
-/*
-                case 'changeTabSelect':
-                    {
-                        changeTabSelect(sender.tab.windowId, request.tabId);
-                        break;
-                    }
-*/
+
                 case 'selectAll':
                     {
                         selectAllInWindow(sender.tab.windowId);
@@ -212,7 +198,6 @@ chrome.runtime.onMessage.addListener(
                             tab[key] = value;
                         }
                         chrome.tabs.executeScript(request.tabId, { code: `document.title = '${tab.title}'` });
-                        //chrome.tabs.update(request.tab.id, request.tab);
                     }
             }
         }

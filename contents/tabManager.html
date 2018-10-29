@@ -1,6 +1,5 @@
 <style type="text/css">
-    /* basic style */
-
+    /*搜尋框*/
     .zeromark_tabManager_tabSearchBar {
         position: relative;
         height: 30px;
@@ -10,6 +9,7 @@
         background: white;
     }
 
+    /*分頁物件容器*/
     .zeromark_tabManager_tabList {
         position: relative;
         overflow-y: scroll;
@@ -18,7 +18,7 @@
         color: black;
     }
 
-
+    /*分頁物件*/
     .zeromark_tabManager_listItem {
         height: 30px;
         position: relative;
@@ -29,6 +29,7 @@
         padding: 2px 12px;
     }
 
+    /*生成分頁選取時的特效*/
     .zeromark_tabManager_listItem_selected {
         border-style: solid;
         border-width: 2px;
@@ -37,10 +38,12 @@
         padding: 0px 12px;
     }
 
+    /*不滿足搜尋時隱藏分頁*/
     .zeromark_tabManager_invisible {
         display: none;
     }
 
+    /*分頁縮圖*/
     .zeromark_tabManager_favicon {
         display: block;
         background-color: transparent;
@@ -52,11 +55,13 @@
         resize: none;
     }
 
+    /*分頁內層容器，包含縮圖和文字，用於hook 分頁切換事件*/
     .zeromark_tabManager_innerSpan{
         display: flex;
         align-self: auto;
     }
 
+    /*分頁名稱*/
     .zeromark_tabManager_tabtitle {
         text-overflow: ellipsis;
         display: inline-block;
@@ -67,6 +72,7 @@
         font-size: 12px;
     }
 
+    /*關閉分頁按鈕*/
     .zeromark_tabManager_closeButton {
         position: absolute;
         background-color: transparent;

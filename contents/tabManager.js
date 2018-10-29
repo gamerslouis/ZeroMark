@@ -2,7 +2,7 @@
 
 var tabManager = new (class {
     constructor() {
-        this.searchBar = new Object();
+        this.searchBar = new Object(); 
         this.tabList = new Object();
         this._tabManager = new Object;
         this.listItemIdMap = {};
@@ -38,7 +38,7 @@ var tabManager = new (class {
         div.className = 'zeromark_tabManager';
         div.style = 'height: 95%;width: 300px;';
         this._tabManager = div;
-        fetch(chrome.extension.getURL('/contents/tabManagerDesign.html')).then((res) => {
+        fetch(chrome.extension.getURL('/contents/tabManager.html')).then((res) => {
             return res.text();
         }).then((content) => {
             div.innerHTML = content;
@@ -46,7 +46,7 @@ var tabManager = new (class {
             this.searchBar = div.getElementsByClassName('zeromark_tabManager_tabSearchBar')[0];
             this.tabList = div.getElementsByClassName('zeromark_tabManager_tabList')[0];
 
-            /*使用者交互層級事件監聽*/
+            //監聽滑鼠點擊事件
             this.tabList.addEventListener('click', ((e) => {
                 //關閉分頁
                 if (e.ctrlKey || e.shiftKey || e.altKey) return false;
@@ -85,7 +85,7 @@ var tabManager = new (class {
                 }
             }).bind(this);
 
-            //偵測tabList滾動位置
+            //偵測tabList滾動位置，用於跨分頁同步滾輪位置
             this.tabList.addEventListener('scroll', function () {
                 chrome.runtime.sendMessage({ 'command': 'changeScrollPostion', 'scrollPosition': this.tabList.scrollTop });
             }.bind(this));
@@ -113,6 +113,7 @@ var tabManager = new (class {
         this.refreshTabManager();
     }
 
+    //選取所有分頁
     SelectAll() {
         chrome.runtime.sendMessage({
             command: 'selectAll'
@@ -124,7 +125,7 @@ var tabManager = new (class {
         }
     }
 
-
+    //取消所有分頁選取
     cancelSelctAll() {
         chrome.runtime.sendMessage({
             command: 'cancelSelectAll'
@@ -142,16 +143,20 @@ var tabManager = new (class {
         this.listItemIdMap = {};
     }
 
-
+    //生成分頁物件
     makeListItem(tab) {
         let div = document.createElement('div');
         div.className = `${this.classNames.listItem} ${tab.managerSelect ? this.classNames.listItem_selected : ''} ${tab.matchSearch ? '' : this.classNames.listItem_ivisible}`;
         div.style.backgroundColor = tab.labelColor;
-        div.innerHTML = `<span class='${this.classNames.innerSpan}'>` +
-            (configs.tabManagerShowFavicon ? `<img class='${this.classNames.favicon}' src='${((tab.favIconUrl != null) ? tab.favIconUrl : chrome.extension.getURL('imgs/difaultFavicon.png'))}'>` : '') +
-            `<span class='${this.classNames.title}'>${htmlEncode(tab.taged?tab.tagName:tab.title)}</span>
-                        </span>`+
-            (configs.tabManagerShowCloseButton ? `<img src='${chrome.extension.getURL('imgs/closeButton.png')}' class='${this.classNames.closeButton}' height='20' width='20'/>` : '');
+        div.innerHTML =
+            `<span class='${this.classNames.innerSpan}'>` +
+                (configs.tabManagerShowFavicon ?
+                `<img class='${this.classNames.favicon}' src='${((tab.favIconUrl != null) ? tab.favIconUrl : chrome.extension.getURL('imgs/difaultFavicon.png'))}'>` : '') +
+                `<span class='${this.classNames.title}'>${htmlEncode(tab.taged ? tab.tagName : tab.title)}
+                </span>
+            </span>`+
+            (configs.tabManagerShowCloseButton ?
+            `<img src='${chrome.extension.getURL('imgs/closeButton.png')}' class='${this.classNames.closeButton}' height='20' width='20'/>` : '');
         div.tab = tab;
         this.listItemIdMap[tab.id] = div;
 
@@ -160,12 +165,13 @@ var tabManager = new (class {
         return div;
     }
 
-    //添加分頁列表元素
+    //添加分頁物件至列表
     //tab:chrome.tabs.Tab 物件
     addListItem(tab) {
         this.tabList.appendChild(this.makeListItem(tab));
     }
 
+    //依據分頁index 插入分頁物件至列表中
     insertListItem(tab) {
         if (tab.index != this.tabList.childElementCount) {
             this.tabList.insertBefore(this.makeListItem(tab), this.tabList.children[tab.index]);
@@ -291,8 +297,6 @@ var tabManager = new (class {
                                 lastIndex = i;
                             }
                         }
-
-
 
                         if (!e.ctrlKey) {
                             this.cancelSelctAll();

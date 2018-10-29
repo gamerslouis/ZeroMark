@@ -47,7 +47,7 @@
         }
     },
     "web_accessible_resources": [
-        "contents/tabManagerDesign.html",
+        "contents/tabManager.html",
         "imgs/*",
         "contents/markBox.html"
     ],
