@@ -15,16 +15,18 @@ export default class Configs {
         try {
             chrome.storage.local.get('configs', (e) => {
                 let localConfigs = e.configs;
-                this._applyValues(localConfigs);
+                if (localConfigs != undefined) this._applyValues(localConfigs);
+                else this.logger('No local configs, apply defualt configs:',this.appliedValues);
             });
         }
         catch (error) {
             this.logger('Fail to load local configs');
-            this.loaded = true;
         }
+        
+        this.loaded = true;
     }
 
-    trySave(key,value) {
+    trySave(key, value) {
         try {
             chrome.storage.local.get('configs', (e) => {
                 let localConfigs = e.configs;
@@ -52,7 +54,7 @@ export default class Configs {
     setValue(key, value) {
         if (key in this) {
             this._applyValues({ [key]: value });
-            this.trySave(key,value);
+            this.trySave(key, value);
         }
         else {
             this.logger(`Fail to set config because ${key} is not aviable property`);
