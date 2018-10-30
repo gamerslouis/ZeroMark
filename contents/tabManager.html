@@ -1,12 +1,14 @@
 <style type="text/css">
     /*搜尋框*/
     .zeromark_tabManager_tabSearchBar {
+        border: none;
         position: relative;
         height: 30px;
-        width: 270px;
+        width: 288px;
         margin: 5px;
+        margin-left: 5px;
         resize: none;
-        background: white;
+        background: #e6e6e6;
     }
 
     /*分頁物件容器*/
@@ -20,6 +22,10 @@
 
     /*分頁物件*/
     .zeromark_tabManager_listItem {
+        border-color:black;
+        border-width:2px;
+        border-style: solid;
+		display:flex;
         height: 30px;
         position: relative;
         margin: 5px;
@@ -45,24 +51,28 @@
 
     /*分頁縮圖*/
     .zeromark_tabManager_favicon {
+        line-height:30px;
         display: block;
         background-color: transparent;
         position: flex;
         background-size: 1rem 1rem;
         width: 25px;
         height: 25px;
+        margin-left: 0px;
         margin-right: 5px;
         resize: none;
     }
 
     /*分頁內層容器，包含縮圖和文字，用於hook 分頁切換事件*/
     .zeromark_tabManager_innerSpan{
+        height: 100%;
         display: flex;
         align-self: auto;
     }
 
     /*分頁名稱*/
     .zeromark_tabManager_tabtitle {
+        line-height:30px;
         text-overflow: ellipsis;
         display: inline-block;
         white-space: nowrap;
