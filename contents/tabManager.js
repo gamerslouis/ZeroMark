@@ -2,7 +2,7 @@
 
 var tabManager = new (class {
     constructor() {
-        this.searchBar = new Object(); 
+        this.searchBar = new Object();
         this.tabList = new Object();
         this._tabManager = new Object;
         this.listItemIdMap = {};
@@ -45,6 +45,14 @@ var tabManager = new (class {
             sidebar.append(div);
             this.searchBar = div.getElementsByClassName('zeromark_tabManager_tabSearchBar')[0];
             this.tabList = div.getElementsByClassName('zeromark_tabManager_tabList')[0];
+
+            let css = document.createElement('link');
+            css.setAttribute('rel', 'stylesheet');
+            css.setAttribute('type', 'text/css');
+            css.setAttribute('href', chrome.extension.getURL('contents/tabManager.css'));
+            document.getElementsByTagName('head')[0].appendChild(css);
+
+            document.getElementsByClassName('zeromark_tabManager_tabSearchIcon')[0].src = chrome.extension.getURL('imgs/searchIcon.png');
 
             //監聽滑鼠點擊事件
             this.tabList.addEventListener('click', ((e) => {
@@ -145,18 +153,25 @@ var tabManager = new (class {
 
     //生成分頁物件
     makeListItem(tab) {
-        let div = document.createElement('div');
-        div.className = `${this.classNames.listItem} ${tab.managerSelect ? this.classNames.listItem_selected : ''} ${tab.matchSearch ? '' : this.classNames.listItem_ivisible}`;
+        let div = document.getElementsByClassName('zeromark_tabManager_listItem_template')[0].cloneNode(true);
+        div.classList.remove('zeromark_tabManager_listItem_template');
+        div.classList.add('zeromark_tabManager_listItem');
+
+        if (tab.managerSelect) div.classList.add(this.classNames.listItem_selected);
+        if (!tab.matchSearch) div.classList.add(this.classNames.listItem_ivisible);
         div.style.backgroundColor = tab.labelColor;
-        div.innerHTML =
-            `<span class='${this.classNames.innerSpan}'>` +
-                (configs.tabManagerShowFavicon ?
-                `<img class='${this.classNames.favicon}' src='${((tab.favIconUrl != null) ? tab.favIconUrl : chrome.extension.getURL('imgs/difaultFavicon.png'))}'>` : '') +
-                `<span class='${this.classNames.title}'>${htmlEncode(tab.taged ? tab.tagName : tab.title)}
-                </span>
-            </span>`+
-            (configs.tabManagerShowCloseButton ?
-            `<img src='${chrome.extension.getURL('imgs/closeButton.png')}' class='${this.classNames.closeButton}' height='20' width='20'/>` : '');
+
+        if (configs.tabManagerShowFavicon && tab.favIconUrl != null) {
+            div.getElementsByClassName(this.classNames.favicon)[0].src = tab.favIconUrl;
+        }
+
+        div.getElementsByClassName(this.classNames.title)[0].innerText = htmlEncode(tab.taged ? tab.tagName : tab.title);
+
+        if (configs.tabManagerShowCloseButton) {
+            div.getElementsByClassName(this.classNames.closeButton)[0].src = chrome.extension.getURL('imgs/closeButton.png');
+        }
+
+        
         div.tab = tab;
         this.listItemIdMap[tab.id] = div;
 
@@ -339,7 +354,7 @@ var tabManager = new (class {
             case 3:
                 {
                     this.markBox.show(e.currentTarget.tab, e.clientX - 270, e.clientY, (change) => {
-                        let changes = { };
+                        let changes = {};
                         switch (change.type) {
                             case 'title':
                                 {
@@ -417,14 +432,14 @@ chrome.runtime.onMessage.addListener(
                     }
                     break;
                 }
-            
+
             case 'onConfigChange':
                 {
                     if (request.config.key == 'tabManagerShowFavicon' ||
                         request.config.key == 'tabManagerShowCloseButton') {
                         configs[request.config.key] = request.config.value;
                         tabManager.refreshTabManager();
-                        } 
+                    }
                     break;
                 }
 

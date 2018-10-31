@@ -1,101 +1,24 @@
-<style type="text/css">
-    /*搜尋框*/
-    .zeromark_tabManager_tabSearchBar {
-        font: normal 16px Roboto,sans-serif;
-        padding: 0px 7px;
-        border: none;
-        position: relative;
-        height: 30px;
-        width: 91%;
-        margin: 7px;
-        /*margin-left: 5px;*/
-        resize: none;
-        background: #e6e6e6;
-    }
+<div>
+    <div>
+        <span>
+            <input class='zeromark_tabManager_tabSearchBar' type="text" placeholder="杜尋" />
+        </span>
+        <span>
+            <img class="zeromark_tabManager_tabSearchIcon">
+        </span>
+    </div>
+    <div class="zeromark_tabManager_tabList"></div>
+</div>
 
-    /*分頁物件容器*/
-    .zeromark_tabManager_tabList {
-        font: normal 16px Roboto, RobotoDraft, Helvetica, Arial;
-        position: relative;
-        overflow-y: scroll;
-        overflow-x: hidden;
-        height: 95%;
-        color: black;
-    }
-
-    /*分頁物件*/
-    .zeromark_tabManager_listItem {
-        box-shadow:0px 0px 3px rgba(20%,20%,40%,0.5) inset;
-        /*border-color:black;
-        border-width:2px;
-        border-style: solid;*/
-		display:flex;
-        height: 30px;
-        position: relative;
-        margin: 5px;
-        border-radius: 2px;
-        display: flex;
-        align-items: center;
-        padding: 2px 12px;
-    }
-
-    /*生成分頁選取時的特效*/
-    .zeromark_tabManager_listItem_selected {
-        border-style: solid;
-        border-width: 2px;
-        border-color: skyblue;
-        margin: 3px 5px;
-        padding: 0px 12px;
-    }
-
-    /*不滿足搜尋時隱藏分頁*/
-    .zeromark_tabManager_invisible {
-        display: none;
-    }
-
-    /*分頁縮圖*/
-    .zeromark_tabManager_favicon {
-        line-height:30px;
-        display: block;
-        background-color: transparent;
-        position: flex;
-        background-size: 1rem 1rem;
-        width: 25px;
-        height: 25px;
-        margin-left: 0px;
-        margin-right: 5px;
-        resize: none;
-    }
-
-    /*分頁內層容器，包含縮圖和文字，用於hook 分頁切換事件*/
-    .zeromark_tabManager_innerSpan{
-        height: 100%;
-        display: flex;
-        align-self: auto;
-    }
-
-    /*分頁名稱*/
-    .zeromark_tabManager_tabtitle {
-        line-height:30px;
-        text-overflow: ellipsis;
-        display: inline-block;
-        white-space: nowrap;
-        overflow: hidden;
-        height: 100%;
-        width: 220px;
-        font-size: 12px;
-    }
-
-    /*關閉分頁按鈕*/
-    .zeromark_tabManager_closeButton {
-        position: absolute;
-        background-color: transparent;
-        width: 30px;
-        height: 30px;
-        right: 2px;
-    }
-</style>
-
-<input class='zeromark_tabManager_tabSearchBar' type="text" />
-<div class="zeromark_tabManager_tabList">
+<div class="zeromark_tabManager_listItem_template">
+    <span class="zeromark_tabManager_favicon_c">
+        <img class="zeromark_tabManager_favicon">
+    </span>
+    <span class="zeromark_tabManager_tabtitle_c">
+        <span class="zeromark_tabManager_tabtitle">
+        </span>
+    </span>
+    <span class="zeromark_tabManager_closeButton_c">
+        <img class="zeromark_tabManager_closeButton">
+    </span>
 </div>
