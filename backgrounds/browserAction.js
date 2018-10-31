@@ -11,7 +11,9 @@ let browserAction = new (class {
         logger('init');
 
         chrome.browserAction.onClicked.addListener(() => {
-
+            chrome.tabs.query({ currentWindow: true, active: true }, (apiTabs) => {
+                chrome.tabs.sendMessage(apiTabs[0].id, { command: 'key_openSidebar' }); //控制內容腳本開關分頁
+            });
         });
 
         chrome.tabs.onActivated.addListener(this.UpdateBadgeText);
