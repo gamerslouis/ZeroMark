@@ -206,3 +206,7 @@
     margin-right: 7px;
     padding: 0;
 }
+
+.zeromark_tabManager_listItem_mouseover{
+     background-color:  darkviolet !important;
+}

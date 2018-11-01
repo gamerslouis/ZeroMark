@@ -176,6 +176,8 @@ var tabManager = new (class {
         this.listItemIdMap[tab.id] = div;
 
         div.addEventListener('mousedown', this.onListItemClick.bind(this));
+        div.addEventListener('mouseover', this.onListItemMouseOver.bind(this));
+        div.addEventListener('mouseout', this.onListItemMouseOut.bind(this));
 
         return div;
     }
@@ -385,6 +387,14 @@ var tabManager = new (class {
         }
         e.preventDefault();
         return false;
+    }
+
+    onListItemMouseOver(e) {
+        e.currentTarget.classList.add('zeromark_tabManager_listItem_mouseover');
+    }
+
+    onListItemMouseOut(e) {
+        e.currentTarget.classList.remove('zeromark_tabManager_listItem_mouseover');
     }
 
 })();
