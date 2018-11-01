@@ -146,7 +146,7 @@ var tabManager = new (class {
     //清除分頁列表元素
     cleanManagerList() {
         while (this.tabList.firstChild) {
-            this.tabList.removeChild(this.tabList.firstChild);
+            this.removeListItem(this.tabList.firstChild);
         }
         this.listItemIdMap = {};
     }
@@ -171,7 +171,7 @@ var tabManager = new (class {
             div.getElementsByClassName(this.classNames.closeButton)[0].src = chrome.extension.getURL('imgs/closeButton.png');
         }
 
-        
+
         div.tab = tab;
         this.listItemIdMap[tab.id] = div;
 
@@ -184,8 +184,20 @@ var tabManager = new (class {
 
     //添加分頁物件至列表
     //tab:chrome.tabs.Tab 物件
-    addListItem(tab) {
-        this.tabList.appendChild(this.makeListItem(tab));
+    addListItem(listItem) {
+        this.tabList.appendChild(listItem);
+    }
+
+    removeListItem(listItem, useAnimation = false) {
+        if (useAnimation) {
+            JQ(listItem).slideUp(
+                150, () => {
+                    tabManager.tabList.removeChild(listItem);
+                });
+        }
+        else {
+            this.tabList.removeChild(listItem);
+        }
     }
 
     //依據分頁index 插入分頁物件至列表中
@@ -222,7 +234,7 @@ var tabManager = new (class {
         for (let i = listItems.length - 1; i >= 0; i--) {
             tabIds.push(listItems[i].tab.id);
             delete this.listItemIdMap[listItems[i].tab.id];
-            this.tabList.removeChild(listItems[i]);
+            this.removeListItem(listItems[i], true);
         }
         chrome.runtime.sendMessage({
             'command': 'closeTabs',
@@ -249,7 +261,8 @@ var tabManager = new (class {
             });
 
             res.list.forEach(tab => {
-                this.node = this.addListItem(tab);
+                let listItem = this.makeListItem(tab);
+                this.node = this.addListItem(listItem);
                 this.thisWindowId = tab.windowId;
             });
 
@@ -425,7 +438,7 @@ chrome.runtime.onMessage.addListener(
             case 'onTabRemove':
                 {
                     let div = tabManager.listItemIdMap[request.tabId];
-                    tabManager.tabList.removeChild(div);
+                    tabManager.removeListItem(div, true);
                     delete tabManager.listItemIdMap[request.tabId];
                     break;
                 }
