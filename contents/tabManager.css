@@ -1,39 +1,45 @@
 /*最外層*/
-.zeromark_tabManager_minePage{
+
+.zeromark_tabManager_minePage {
     height: 100%;
     width: 300px;
-    box-shadow:0px 0px 3px rgba(20%,20%,40%,0.5) inset;
-    background-color:White;
+    box-shadow: 0px 0px 3px rgba(20%, 20%, 40%, 0.5) inset;
+    background-color: White;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
 
 /*外框填滿*/
 
-.zeromark_tabManager_full{
+.zeromark_tabManager_full {
     height: 100%;
     width: 100%;
 }
 
-.zeromark_tabManager_toolBar{
+.zeromark_tabManager_toolBar {
     height: 30px;
     width: 100%;
     background: grey;
 }
 
 /*工具列*/
-.zeromark_tabManager_moreTool{
 
-}
+.zeromark_tabManager_moreTool {}
 
 /*搜尋欄最外框*/
-.zeromark_tabManager_mineTabSearchBar{
+
+.zeromark_tabManager_mineTabSearchBar {
     margin: 5px;
     height: 35px;
     width: 100%;
     position: relative;
     /*border-bottom: 1px solid;*/
 }
+
 /*搜尋欄容器*/
-.zeromark_tabManager_tabSearchBar_container{
+
+.zeromark_tabManager_tabSearchBar_container {
     height: 40px;
     margin: 5px;
     margin-right: 25px;
@@ -52,14 +58,15 @@
     width: 80%;
     resize: none;
     background: #e6e6e6;
-    display:inline-block;
+    display: inline-block;
 }
 
 /*搜尋按鈕容器*/
-.zeromark_tabManager_tabSearchIcon_container{
+
+.zeromark_tabManager_tabSearchIcon_container {
     height: 34px;
     width: 34px;
-    background:#e6e6e6; 
+    background: #e6e6e6;
     top: 0;
 }
 
@@ -134,15 +141,7 @@
     margin: 0;
     position: absolute;
     top: 50%;
-    transform: translate(-50%,-50%);
-}
-
-/*分頁內層容器，包含縮圖和文字，用於hook 分頁切換事件*/
-
-.zeromark_tabManager_innerSpan {
-    height: 100%;
-    display: flex;
-    align-self: auto;
+    transform: translate(-50%, -50%);
 }
 
 /*分頁名稱*/
@@ -170,35 +169,35 @@
     margin: 0;
     position: absolute;
     top: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
 }
 
 .zeromark_tabManager_listItem_template {
     display: none;
 }
 
-.zeromark_tabManager_beForeListItem{
+.zeromark_tabManager_beForeListItem {
     height: 100%;
     width: 2px;
     margin: 0px 2px 0px 2px;
     position: relative;
 }
 
-.zeromark_tabManager_closeButton_c{
+.zeromark_tabManager_closeButton_c {
     height: 30px;
     width: 30px;
     line-height: 46px;
     position: relative;
 }
 
-.zeromark_tabManager_tabtitle_c{
+.zeromark_tabManager_tabtitle_c {
     height: 34;
     position: relative;
     padding: 0;
     padding-top: 1px;
 }
 
-.zeromark_tabManager_favicon_c{
+.zeromark_tabManager_favicon_c {
     height: 30px;
     width: 30px;
     position: relative;
@@ -207,6 +206,8 @@
     padding: 0;
 }
 
-.zeromark_tabManager_listItem_mouseover{
-     background-color:  darkviolet !important;
+/*滑鼠觸碰分頁特效*/
+
+.zeromark_tabManager_listItem_mouseover {
+    background-color: darkviolet !important;
 }
