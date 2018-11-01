@@ -35,8 +35,8 @@ var tabManager = new (class {
     Init() {
         //導入TabManager主體
         let div = document.createElement('div');
-        div.className = 'zeromark_tabManager';
-        div.style = 'height: 100%;width: 300px; box-shadow:0px 0px 3px rgba(20%,20%,40%,0.5) inset;background-color:White';
+        div.className = 'zeromark_tabManager_minePage';
+        /*div.style = 'height: 100%;width: 300px; box-shadow:0px 0px 3px rgba(20%,20%,40%,0.5) inset;background-color:White';*/
         this._tabManager = div;
         fetch(chrome.extension.getURL('/contents/tabManager.html')).then((res) => {
             return res.text();
