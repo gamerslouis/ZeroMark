@@ -11,19 +11,16 @@ var sidebar = new (class {
     Init() {
         //插入管理器根元素
         let div = document.createElement('div');
-        div.classList.add(this.SIDEBAR_CLASS_NAME); //設定class屬性
-        div.style.background = '#cccccc';
-        div.style.height = '100%';
-        div.style.width = '300px';
-        div.style.position = 'fixed';
-        div.style.top = '0px';
-        div.style.right = '0px';
-        div.style.zIndex = '9000000';
-        div.style.display = 'none';
-        div.style.borderStyle = 'none';
+        div.classList.add(this.SIDEBAR_CLASS_NAME); //設定class屬性      
         div.frameBorder = 'none';
         div.target = '_parent';
         document.body.appendChild(div);
+
+        let css = document.createElement('link');
+        css.setAttribute('rel', 'stylesheet');
+        css.setAttribute('type', 'text/css');
+        css.setAttribute('href', chrome.extension.getURL('contents/sidebar.css'));
+        document.getElementsByTagName('head')[0].appendChild(css);
 
         this._dom = div;
 

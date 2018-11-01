@@ -49,6 +49,7 @@
     "web_accessible_resources": [
         "contents/tabManager.html",
         "contents/tabManager.css",
+        "contents/sidebar.css",
         "imgs/*",
         "contents/markBox.html"
     ],

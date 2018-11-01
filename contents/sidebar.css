@@ -1,0 +1,11 @@
+.zeromark_sidebar{
+    background : #cccccc;
+    height : 100%;
+    width : 300px;
+    position : fixed;
+    top : 0px;
+    right : 0px;
+    z-index : 9000000;
+    display :none;
+    border-style : none;
+}
