@@ -9,6 +9,7 @@ var tabManager = new (class {
         this.contextmenu = new Object();
         this.markBox = new MarkBox();
 
+        this.unInited = true;
         this.unLoaded = true;
         this.flagUpdating = false;
 
@@ -117,8 +118,8 @@ var tabManager = new (class {
                 this.searchBar.select();
             }).bind(this));
 
-            this.unLoaded = false;
-            this.refreshTabManager();
+            this.unInited = false;
+            this.refreshTabManager(true,true);
         });
     }
 
@@ -244,9 +245,11 @@ var tabManager = new (class {
     }
 
     //刷新分頁列表
-    refreshTabManager(withSearchStr = true) {
-        if (this.flagUpdating || this.unLoaded) return;
-        else this.flagUpdating = true;
+    refreshTabManager(withSearchStr = true, firstLoad = false) {
+        if (!firstLoad) {
+            if (this.flagUpdating || this.unInited || this.unLoaded) return;
+        }
+        this.flagUpdating = true;
         this.cleanManagerList();
 
         chrome.runtime.sendMessage({
@@ -263,7 +266,6 @@ var tabManager = new (class {
                 else if (a.index > b.index) return 1;
                 return 0;
             });
-
             res.list.forEach(tab => {
                 let listItem = this.makeListItem(tab);
                 if (this.thisTabId == tab.id) {
@@ -274,6 +276,7 @@ var tabManager = new (class {
 
             this.tabList.scrollTo(0, res.scrollPosition);
             this.flagUpdating = false;
+            this.unLoaded = false;
         });
     }
 
@@ -427,6 +430,7 @@ function htmlEncode(value) {
 
 chrome.runtime.onMessage.addListener(
     (function (request /*, sender, sendResponse*/) {
+        if (tabManager.unInited || tabManager.unLoaded) return;
         switch (request.command) {
             case 'refreshManager':
                 {
