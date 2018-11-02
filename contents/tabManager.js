@@ -16,6 +16,7 @@ var tabManager = new (class {
         this.maxSearchWait = 400; //Delay Between UserInput and Search
 
         this.thisWindowId;
+        this.thisTabId;
 
         this.lastSelectoId = -1; //For Shift Select
 
@@ -115,10 +116,10 @@ var tabManager = new (class {
             this.searchBar.addEventListener(('click'), (() => {
                 this.searchBar.select();
             }).bind(this));
-        });
 
-        this.unLoaded = false;
-        this.refreshTabManager();
+            this.unLoaded = false;
+            this.refreshTabManager();
+        });
     }
 
     //選取所有分頁
@@ -251,6 +252,9 @@ var tabManager = new (class {
         chrome.runtime.sendMessage({
             command: 'getManagerInfo'
         }, (res) => { //取得當前分頁列表  
+            this.thisWindowId = res.thisWindowId;
+            this.thisTabId = res.thisTabId;
+
             if (withSearchStr) {
                 this.searchBar.value = res.searchStr;
             }
@@ -262,8 +266,10 @@ var tabManager = new (class {
 
             res.list.forEach(tab => {
                 let listItem = this.makeListItem(tab);
+                if (this.thisTabId == tab.id) {
+                    listItem.classList.add('zeromark_tabmanager_current_tab'); //標記當前分頁
+                }
                 this.node = this.addListItem(listItem);
-                this.thisWindowId = tab.windowId;
             });
 
             this.tabList.scrollTo(0, res.scrollPosition);

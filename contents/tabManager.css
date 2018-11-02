@@ -206,6 +206,12 @@
     padding: 0;
 }
 
+/*標記當前分頁*/
+
+.zeromark_tabmanager_current_tab {
+    background-color: blue !important;
+}
+
 /*滑鼠觸碰分頁特效*/
 
 .zeromark_tabManager_listItem_mouseover {

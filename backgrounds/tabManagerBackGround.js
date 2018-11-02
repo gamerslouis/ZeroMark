@@ -149,7 +149,9 @@ chrome.runtime.onMessage.addListener(
                             'searchStr':
                                 (typeof (searchStrs[sender.tab.windowId]) != 'undefined') ?
                                     searchStrs[sender.tab.windowId] : searchStrs[sender.tab.windowId] = '',
-                            'scrollPosition': scrollPosition[sender.tab.windowId] || 0
+                            'scrollPosition': scrollPosition[sender.tab.windowId] || 0,
+                            'thisWindowId': sender.tab.windowId,
+                            'thisTabId':sender.tab.id
                         });
 
                         return true; //for asyc response,without cause sendresponse not work
