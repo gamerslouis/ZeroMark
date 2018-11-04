@@ -15,7 +15,7 @@
 .zeromark_tabManager_full {
     height: 100%;
     width: 100%;
-    background-color:White;
+    background-color: White;
 }
 
 .zeromark_tabManager_toolBar {
@@ -189,7 +189,7 @@
     width: 30px;
     line-height: 46px;
     position: relative;
-    margin:0px 3px;
+    margin: 0px 3px;
 }
 
 .zeromark_tabManager_tabtitle_c {
@@ -210,7 +210,7 @@
 
 /*標記當前分頁*/
 
-.zeromark_tabmanager_current_tab {
+.zeromark_tabmanager_listItem_currentTab {
     background-color: blue !important;
 }
 
@@ -220,6 +220,6 @@
     background-color: darkviolet !important;
 }
 
-.zeromark_tabManager_closetabList_container{
+.zeromark_tabManager_closetabList_container {
     height: 20%;
 }

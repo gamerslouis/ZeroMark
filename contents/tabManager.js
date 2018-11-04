@@ -22,39 +22,39 @@ var tabManager = new (class {
         this.lastSelectoId = -1; //For Shift Select
 
         this.classNames = {
+            minePage: 'zeromark_tabManager_minePage',
             searchBar: 'zeromark_tabManager_tabSearchBar',
+            tabSearchIcon:'zeromark_tabManager_tabSearchIcon',
             tabList: 'zeromark_tabManager_tabList',
             listItem: 'zeromark_tabManager_listItem',
+            listItem_template: 'zeromark_tabManager_listItem_template',
             listItem_selected: 'zeromark_tabManager_listItem_selected',
             listItem_ivisible: 'zeromark_tabManager_invisible',
+            listItem_mouseover: 'zeromark_tabManager_listItem_mouseover',
+            listItem_currentTab: 'zeromark_tabmanager_listItem_currentTab',
             favicon: 'zeromark_tabManager_favicon',
             title: 'zeromark_tabManager_tabtitle',
             closeButton: 'zeromark_tabManager_closeButton',
-            innerSpan: 'zeromark_tabManager_innerSpan'
+            innerSpan: 'zeromark_tabManager_innerSpan',
         };
     }
 
     Init() {
         //導入TabManager主體
         let div = document.createElement('div');
-        div.className = 'zeromark_tabManager_minePage';
-        /*div.style = 'height: 100%;width: 300px; box-shadow:0px 0px 3px rgba(20%,20%,40%,0.5) inset;background-color:White';*/
+        div.className = this.classNames.minePage;
         this._tabManager = div;
         fetch(chrome.extension.getURL('/contents/tabManager.html')).then((res) => {
             return res.text();
         }).then((content) => {
             div.innerHTML = content;
             sidebar.append(div);
-            this.searchBar = div.getElementsByClassName('zeromark_tabManager_tabSearchBar')[0];
-            this.tabList = div.getElementsByClassName('zeromark_tabManager_tabList')[0];
 
-            let css = document.createElement('link');
-            css.setAttribute('rel', 'stylesheet');
-            css.setAttribute('type', 'text/css');
-            css.setAttribute('href', chrome.extension.getURL('contents/tabManager.css'));
-            document.getElementsByTagName('head')[0].appendChild(css);
+            this.searchBar = div.getElementsByClassName(this.classNames.searchBar)[0];
+            this.tabList = div.getElementsByClassName(this.classNames.tabList)[0];
 
-            document.getElementsByClassName('zeromark_tabManager_tabSearchIcon')[0].src = chrome.extension.getURL('imgs/searchIcon.png');
+            loadCSSFile(chrome.extension.getURL('contents/tabManager.css'));
+            document.getElementsByClassName(this.classNames.tabSearchIcon)[0].src = chrome.extension.getURL('imgs/searchIcon.png');
 
             //監聽滑鼠點擊事件
             this.tabList.addEventListener('click', ((e) => {
@@ -155,9 +155,9 @@ var tabManager = new (class {
 
     //生成分頁物件
     makeListItem(tab) {
-        let div = document.getElementsByClassName('zeromark_tabManager_listItem_template')[0].cloneNode(true);
-        div.classList.remove('zeromark_tabManager_listItem_template');
-        div.classList.add('zeromark_tabManager_listItem');
+        let div = document.getElementsByClassName(this.classNames.listItem_template)[0].cloneNode(true);
+        div.classList.remove(this.classNames.listItem_template);
+        div.classList.add(this.classNames.listItem);
 
         if (tab.managerSelect) div.classList.add(this.classNames.listItem_selected);
         if (!tab.matchSearch) div.classList.add(this.classNames.listItem_ivisible);
@@ -269,7 +269,7 @@ var tabManager = new (class {
             res.list.forEach(tab => {
                 let listItem = this.makeListItem(tab);
                 if (this.thisTabId == tab.id) {
-                    listItem.classList.add('zeromark_tabmanager_current_tab'); //標記當前分頁
+                    listItem.classList.add(this.classNames.listItem_currentTab); //標記當前分頁
                 }
                 this.node = this.addListItem(listItem);
             });
@@ -412,11 +412,11 @@ var tabManager = new (class {
     }
 
     onListItemMouseOver(e) {
-        e.currentTarget.classList.add('zeromark_tabManager_listItem_mouseover');
+        e.currentTarget.classList.add(this.classNames.listItem_mouseover);
     }
 
     onListItemMouseOut(e) {
-        e.currentTarget.classList.remove('zeromark_tabManager_listItem_mouseover');
+        e.currentTarget.classList.remove(this.classNames.listItem_mouseover);
     }
 
 })();

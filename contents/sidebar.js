@@ -16,11 +16,7 @@ var sidebar = new (class {
         div.target = '_parent';
         document.body.appendChild(div);
 
-        let css = document.createElement('link');
-        css.setAttribute('rel', 'stylesheet');
-        css.setAttribute('type', 'text/css');
-        css.setAttribute('href', chrome.extension.getURL('contents/sidebar.css'));
-        document.getElementsByTagName('head')[0].appendChild(css);
+        loadCSSFile(chrome.extension.getURL('contents/sidebar.css'));
 
         this._dom = div;
 
@@ -41,7 +37,7 @@ var sidebar = new (class {
 
     /**檢測Sidebar是否處於顯示狀態*/
     isOpened() {
-        return this._dom.style.display != 'none';
+        return this._dom.style.display != 'none' && this._dom.style.display != '';
     }
 
     /**添加元素至Sidebar
