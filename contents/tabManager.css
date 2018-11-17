@@ -22,11 +22,26 @@
     height: 30px;
     width: 100%;
     background: grey;
+    display: flex;
+    position: relative;
+    align-items: center;
 }
 
 /*工具列*/
 
-.zeromark_tabManager_moreTool {}
+.zeromark_tabManager_moreTool {
+    display: inline-block;
+    height: 30;
+    width: 30; 
+    background: #e67e22;
+}
+
+.zeromark_tabManager_setting{
+    display: inline-block;
+    height: 30;
+    width: 30; 
+    background: #e74c3c;
+}
 
 /*搜尋欄最外框*/
 
@@ -43,7 +58,7 @@
 .zeromark_tabManager_tabSearchBar_container {
     height: 40px;
     margin: 5px;
-    margin-right: 25px;
+    margin-right: 1px;
     margin-left: 5px;
     overflow: hidden;
 }
@@ -65,10 +80,11 @@
 /*搜尋按鈕容器*/
 
 .zeromark_tabManager_tabSearchIcon_container {
-    height: 34px;
-    width: 34px;
+    height: 36px;
+    width: 36px;
     background: #e6e6e6;
     top: 0;
+    margin:100 100;
 }
 
 /*搜尋圖示*/
@@ -77,8 +93,9 @@
     height: 34px;
     width: 34px;
     position: absolute;
-    right: 10px;
+    right: 7px;
     top: 0;
+    cursor: pointer;
 }
 
 /*分頁物件容器*/
@@ -157,6 +174,7 @@
     height: 100%;
     width: 195px;
     font-size: 12px;
+    cursor: pointer;
 }
 
 /*關閉分頁按鈕*/
@@ -172,6 +190,7 @@
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
+    cursor: pointer;
 }
 
 .zeromark_tabManager_listItem_template {
@@ -202,11 +221,12 @@
 
 .zeromark_tabManager_favicon_c {
     height: 30px;
-    width: 40px;
+    width: 30px;
     position: relative;
     margin-left: 4px;
     margin-right: 7px;
     padding: 0;
+    cursor: move;
 }
 
 /*標記當前分頁*/
