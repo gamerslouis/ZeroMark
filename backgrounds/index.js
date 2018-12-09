@@ -34,7 +34,7 @@ chrome.runtime.onMessage.addListener(
                         else {
                             sendResponse(configs.appliedValues);
                         }
-                        break;
+                        return true;
                     }
                 case 'setConfig':
                     {

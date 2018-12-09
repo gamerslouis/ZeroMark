@@ -53,7 +53,7 @@ var sidebar = new (class {
     show() {
         JQ(this._dom).show('slide', {
             direction: 'right'
-        }, configs.sidebarSlideTime);
+        }, Nubmer(configs.sidebarSlideTime));
         this._dom.focus();
         this.onDisplayChange.fire(this, {
             'type': 'show'
@@ -64,7 +64,7 @@ var sidebar = new (class {
     hide() {
         JQ(this._dom).hide('slide', {
             direction: 'right'
-        }, this.slideSpeed);
+        }, Nubmer(configs.sidebarSlideTime));
         this.onDisplayChange.fire(this, {
             'type': 'hide'
         });

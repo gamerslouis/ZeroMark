@@ -155,9 +155,8 @@ var tabManager = new (class {
 
     //生成分頁物件
     makeListItem(tab) {
-        let div = document.getElementsByClassName(this.classNames.listItem_template)[0].cloneNode(true);
-        div.classList.remove(this.classNames.listItem_template);
-        div.classList.add(this.classNames.listItem);
+        
+        let div = makeFromTemplate(this.classNames.listItem_template, this.classNames.listItem);
 
         if (tab.managerSelect) div.classList.add(this.classNames.listItem_selected);
         if (!tab.matchSearch) div.classList.add(this.classNames.listItem_ivisible);
