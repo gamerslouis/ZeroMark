@@ -44,7 +44,7 @@ var tabManager = new (class {
         let div = document.createElement('div');
         div.className = this.classNames.minePage;
         this._tabManager = div;
-        fetch(chrome.extension.getURL('/contents/tabManager.html')).then((res) => {
+        return fetch(chrome.extension.getURL('/contents/tabManager.html')).then((res) => {
             return res.text();
         }).then((content) => {
             div.innerHTML = content;
@@ -120,7 +120,7 @@ var tabManager = new (class {
 
             this.unInited = false;
             this.refreshTabManager(true,true);
-        });
+            });
     }
 
     //選取所有分頁

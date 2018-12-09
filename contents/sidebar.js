@@ -87,7 +87,10 @@ window.onload = () => {
     chrome.runtime.sendMessage({ command: 'getConfigs' }, (_configs) => { configs = _configs; });
 
     sidebar.Init();
-    tabManager.Init();
+    tabManager.Init().then(() => {
+        closedTab.Init();
+    });
+    
 
     chrome.runtime.onMessage.addListener(
         function (request/*, sender, sendResponse*/) {

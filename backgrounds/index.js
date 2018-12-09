@@ -11,7 +11,7 @@ window.onload = () => {
     configs.onConfigChange.addListener((e) => {
         chrome.tabs.query({}, (tabs) => {
             tabs.forEach(tab => {
-                chrome.tabs.sendMessage(tab.id,{
+                chrome.tabs.sendMessage(tab.id, {
                     command: 'onConfigChange',
                     config: e
                 });
@@ -45,6 +45,38 @@ chrome.runtime.onMessage.addListener(
                     {
                         configs.reset();
                         break;
+                    }
+            }
+        }
+    }
+);
+
+// For closeTab
+chrome.sessions.onChanged.addListener(() => {
+    sendToActive({ command: 'refreshClosedTabList' });
+});
+
+chrome.tabs.onActivated.addListener(() => {
+    sendToActive({ command: 'refreshClosedTabList' });
+});
+
+chrome.runtime.onMessage.addListener(
+    function (request, sender, sendResponse) {
+        if (request.command) {
+            switch (request.command) {
+
+                case 'openClosedTab':
+                    {
+                        chrome.sessions.restore(request.sessionId);
+                        break;
+                    }
+
+                case 'getClosedTabList':
+                    {
+                        chrome.sessions.getRecentlyClosed({ maxResults: 25 }, sessions => {
+                            sendResponse({ 'closedTabs': sessions });
+                        });
+                        return true;
                     }
             }
         }
