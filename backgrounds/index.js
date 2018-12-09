@@ -1,6 +1,7 @@
 import configs from '/common/realConfigs.js';
 import tabManagerBackGround from './tabManagerBackGround.js';
 import browserAction from './browserAction.js';
+import { sendToActive } from '/common/ContentMessage.js';
 
 window.onload = () => {
     configs.tryLoad();
