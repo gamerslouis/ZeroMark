@@ -100,7 +100,7 @@ function onActivated(activeInfo) {
     if (!configs.tabManagerKeepSelectAfterSwitchTab) {
         cancelSelectAllInWindow(request.windowId);
     }
-    chrome.tabs.sendMessage(activeInfo.tabId, { command: 'refreshManager',onActivated:true });
+    chrome.tabs.sendMessage(activeInfo.tabId, { command: 'refreshManager', onActivated: true });
 }
 
 function onAttached(tabId, attachInfo) {
@@ -152,7 +152,7 @@ chrome.runtime.onMessage.addListener(
                                     searchStrs[sender.tab.windowId] : searchStrs[sender.tab.windowId] = '',
                             'scrollPosition': scrollPosition[sender.tab.windowId] || 0,
                             'thisWindowId': sender.tab.windowId,
-                            'thisTabId':sender.tab.id
+                            'thisTabId': sender.tab.id
                         });
 
                         return true; //for asyc response,without cause sendresponse not work
@@ -196,11 +196,11 @@ chrome.runtime.onMessage.addListener(
                 case 'changeTabInfo':
                     {
                         let tab = tabContainer.getTab(request.windowId, request.tabId);
-                        for (let [key, value] of Object.entries(request.tabInfo))
-                        {
+                        for (let [key, value] of Object.entries(request.tabInfo)) {
                             tab[key] = value;
                         }
                         chrome.tabs.executeScript(request.tabId, { code: `document.title = '${tab.title}'` });
+                        break;
                     }
             }
         }
