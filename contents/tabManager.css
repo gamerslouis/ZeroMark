@@ -193,6 +193,10 @@
     cursor: pointer;
 }
 
+.zeromark_tabManager_closeButton:hover {
+	filter: brightness(65%);
+}
+
 .zeromark_tabManager_listItem_template {
     display: none;
 }
