@@ -53,7 +53,7 @@ var sidebar = new (class {
     show() {
         JQ(this._dom).show('slide', {
             direction: 'right'
-        }, configs.sidebarSlideTime);
+        }, Number(configs.sidebarSlideTime));
         this._dom.focus();
         this.onDisplayChange.fire(this, {
             'type': 'show'
@@ -64,7 +64,7 @@ var sidebar = new (class {
     hide() {
         JQ(this._dom).hide('slide', {
             direction: 'right'
-        }, this.slideSpeed);
+        }, Number(configs.sidebarSlideTime));
         this.onDisplayChange.fire(this, {
             'type': 'hide'
         });
@@ -87,7 +87,10 @@ window.onload = () => {
     chrome.runtime.sendMessage({ command: 'getConfigs' }, (_configs) => { configs = _configs; });
 
     sidebar.Init();
-    tabManager.Init();
+    tabManager.Init().then(() => {
+        closedTab.Init();
+    });
+    
 
     chrome.runtime.onMessage.addListener(
         function (request/*, sender, sendResponse*/) {

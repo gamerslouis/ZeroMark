@@ -44,7 +44,7 @@ var tabManager = new (class {
         let div = document.createElement('div');
         div.className = this.classNames.minePage;
         this._tabManager = div;
-        fetch(chrome.extension.getURL('/contents/tabManager.html')).then((res) => {
+        return fetch(chrome.extension.getURL('/contents/tabManager.html')).then((res) => {
             return res.text();
         }).then((content) => {
             div.innerHTML = content;
@@ -120,7 +120,7 @@ var tabManager = new (class {
 
             this.unInited = false;
             this.refreshTabManager(true,true);
-        });
+            });
     }
 
     //選取所有分頁
@@ -155,9 +155,8 @@ var tabManager = new (class {
 
     //生成分頁物件
     makeListItem(tab) {
-        let div = document.getElementsByClassName(this.classNames.listItem_template)[0].cloneNode(true);
-        div.classList.remove(this.classNames.listItem_template);
-        div.classList.add(this.classNames.listItem);
+        
+        let div = makeFromTemplate(this.classNames.listItem_template, this.classNames.listItem);
 
         if (tab.managerSelect) div.classList.add(this.classNames.listItem_selected);
         if (!tab.matchSearch) div.classList.add(this.classNames.listItem_ivisible);
