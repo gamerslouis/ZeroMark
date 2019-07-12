@@ -236,22 +236,40 @@
 /*標記當前分頁*/
 
 .zeromark_tabmanager_listItem_currentTab {
-    background-color: blue !important;
+    background-color: #85BBF9 !important;
 }
 
 /*滑鼠觸碰分頁特效*/
 
 .zeromark_tabManager_listItem_mouseover {
-    background-color: #dfe6e9 !important;
+    
+	filter: brightness(95%);
 }
 
 .zeromark_tabManager_closedTabList_container {
-    height: 20%;
+    height: 129px;
     border-top: 1px solid #d1d3d6;
     margin-top: 3px;
+	overflow-y: scroll;
 }
 
 .zeromark_tabManager_tabSearchIcon_container{
     height: 20%;
     border-top: 1px solid #d1d3d6;
+}
+
+.zeromark_tabManager_closedTab{
+	/*box-shadow: 1px 0px 3px rgba(20%, 20%, 40%, 0.5) inset;
+    border-color:black;
+    border-width:2px;
+    border-style: solid;*/
+    display: flex;
+    height: 35px;
+    position: relative;
+    /*margin: 1px;*/
+    /*border-radius: 2px;*/
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #d1d3d6;
+    /*padding: 2px 12px;*/
 }
