@@ -55,7 +55,7 @@ var sidebar = new (class {
             direction: 'right'
         }, Number(configs.sidebarSlideTime));
         this._dom.focus();
-        this.onDisplayChange.fire(this, {
+        this.onDisplayChange.fire({
             'type': 'show'
         });
     }
@@ -65,17 +65,17 @@ var sidebar = new (class {
         JQ(this._dom).hide('slide', {
             direction: 'right'
         }, Number(configs.sidebarSlideTime));
-        this.onDisplayChange.fire(this, {
+        this.onDisplayChange.fire({
             'type': 'hide'
         });
     }
 
-    
+
     /**開關Sidebar視窗
      * @param  {bool} open true:開啟視窗 false:關閉視窗 null:反轉當前顯示狀態
      */
     changeDisplay(open) {
-        if (open == null) this.isOpened() ? this.hide(): this.show();
+        if (open == null) this.isOpened() ? this.hide() : this.show();
         else if (open) this.show();
         else this.hide();
     }

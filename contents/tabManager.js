@@ -56,6 +56,15 @@ var tabManager = new (class {
             loadCSSFile(chrome.extension.getURL('contents/tabManager.css'));
             document.getElementsByClassName(this.classNames.tabSearchIcon)[0].src = chrome.extension.getURL('imgs/searchIcon.png');
 
+            sidebar.onDisplayChange.addListener(args => {
+                console.log(args);
+                if (args['type'] == 'show') {
+                    chrome.runtime.sendMessage({
+                        command: 'getManagerInfo'
+                    }, (res) => this.tabList.scrollTo(0, res.scrollPosition));
+                }
+            });
+
             //監聽滑鼠點擊事件
             this.tabList.addEventListener('click', ((e) => {
                 //關閉分頁
