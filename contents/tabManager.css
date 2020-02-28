@@ -126,17 +126,19 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid #d1d3d6;
+	margin: 0px 2px;
     /*padding: 2px 12px;*/
 }
 
 /*生成分頁選取時的特效*/
 
 .zeromark_tabManager_listItem_selected {
-    border-style: solid;
+    height: 32px;
+	border-style: solid;
     border-width: 2px;
     border-color: skyblue;
-    margin: 3px 5px;
-    padding: 0px 12px;
+    margin: 0px 0px;
+    /*padding: 0px 12px;*/
 }
 
 /*不滿足搜尋時隱藏分頁*/
@@ -203,7 +205,7 @@
 
 .zeromark_tabManager_beForeListItem {
     height: 100%;
-    width: 2px;
+    /*width: 2px;*/
     margin: 0px 2px 0px 2px;
     position: relative;
 }
