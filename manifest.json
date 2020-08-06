@@ -2,16 +2,13 @@
     "manifest_version": 2,
     "name": "ZeroMark",
     "description": "Easy Manage your tabs and marks",
-    "version": "0.5.0",
+    "version": "0.5.1 beta",
     "permissions": [
         "sessions",
         "activeTab",
         "tabs",
         "storage",
-        "bookmarks",
         "contextMenus",
-        "unlimitedStorage",
-        "notifications",
         "http://*/",
         "https://*/"
     ],
